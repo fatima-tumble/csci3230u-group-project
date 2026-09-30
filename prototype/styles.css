@@ -1,0 +1,48 @@
+body {
+    margin: 0;
+    font-family: Arial,  sans-serif;
+    background-color: black;
+    color: white;
+}
+
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.search-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    text-align: center;
+}
+
+.search-container input {
+    text-align: center;
+}
+
+.categories {
+    margin-left: 8px;
+}
+
+.tag {
+    display: inline-block;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid gray;
+}
+
+.nav-button {
+    padding: 8px 10px;
+    border-radius: 5px;
+    border:1px solid gray;
+    background-color: black;
+    color: white;
+}
