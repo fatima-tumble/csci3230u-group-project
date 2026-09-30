@@ -1,19 +1,54 @@
 # Project Proposal
 
-The website will be designed to be an info site about different places connected via API
-Information will be complied and shown on the website. Essentially an aggregator site the collects data and displays it as such. Designed for those who want to look and compare different locations for events and activities
+The website will be an informational place-discovery site that collects and displays information from external APIs 
+
+The site is designed for those who want to explore different locations by categories such as food, events, entertainment, and activities. Showcasing information about its name, category and description.
 
 ## Data Source
 
-The website will get its data primarily using OpenTripMap API with some potential supplementary APIs such as Google Maps
+The primary data source will be OpenTripMap API. Additional APIs may be used to support features such as mapping, directions, and navigation to the locations.
+
+Final APIs used will depend on their availability, licensing, restrictions, and rate limits.
 
 ## Comparators
 
-The website will be similar to Google Maps and review sites like Yelp. It differs compared to these sites because the site contains additional details about the locations listed and categorizes them. This website is also not a map site so it will differ quite a bit from Google Maps and not a review site like Yelp
+The website may be similar to Google Maps or review sites like Yelp because it provides real-world information about locations. 
+However, they differ in many ways:
+- This site will focus specifically on location discovery and comparison rather than directions
+- It will organize the locations into different categories and tags
+- It will summarize information from various external sources into a single interface
+- It will not primarily depend on user input, such as reviews and ratings
+- It will provide descriptive information whenever possible
+- It is mainly an information site rather than a mapping platform
 
 ## Scaled feature plan
 WIP
 
 ## Wireframes
 
-Refer to repo for wireframe images
+The initial wireframe shows two pages. The home page which contains:
+- Header
+  - Which will contain:
+    - Search bar
+    - Navigation buttons
+- Location search section
+  - Which contains:
+    - Search by city or postal code
+    - Use nearby location
+- Category based tags
+
+The location detail page which contains:
+- Header
+  - Which will contain:
+    - Search bar
+    - Navigation buttons
+- Place Information
+  - Which will contain:
+    - Place name
+    - Distance away (if available)
+    - Open until
+    - Description (if available)
+- Tags
+- Action Buttons
+- Map
+- Gallery
