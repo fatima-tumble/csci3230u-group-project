@@ -10,6 +10,16 @@ The primary data source will be OpenTripMap API. Additional APIs may be used to 
 
 Final APIs used will depend on their availability, licensing, restrictions, and rate limits.
 
+### Sample data
+{
+  "country": "RU",
+  "timezone": "Europe/Moscow",
+  "name": "Moscow",
+  "lon": 37.61556,
+  "lat": 55.75222,
+  "population": 10381222
+}
+
 ## Comparators
 
 The website may be similar to Google Maps or review sites like Yelp because it provides real-world information about locations. 
