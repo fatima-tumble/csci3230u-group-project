@@ -22,7 +22,63 @@ However, they differ in many ways:
 - It is mainly an information site rather than a mapping platform
 
 ## Scaled feature plan
-WIP
+
+We're splitting the work into three tiers so there's always a working site,
+even if we run out of time for the fancier stuff.
+                             
+### Must have
+
+Stuff the site needs to actually be useful:
+- Search and results list (Vincent)
+  - Search by city or postal code
+  - Pull matching places from OpenTripMap and show them
+  - Handle loading and "no results" states
+- Category browsing (Julian)
+  - Food, events, entertainment, and activities as the main categories
+  - Clicking a category filters the results
+- Location detail page (Brian)
+  - Place name, category, and description
+  - A static map image showing where it is
+- Site shell and responsive layout (Fatima)
+  - Header, search bar, nav
+  - Mobile first, works on desktop too
+- Map setup and API wiring (Matthew)
+  - Base map component used across pages
+  - Shared fetch helper for OpenTripMap (handles the API key, errors)
+
+### Should have
+
+What we're aiming to actually ship:
+- Nearby search using the browser's location (All of Us)
+- Accessibility pass: keyboard nav, alt text, colour contrast (Fatima)
+- Tags on each place card, clickable to filter (Julian)
+- Fuller detail page (Brian)
+  - Distance from where the user is
+  - "Open until" when the data has it
+  - Image gallery
+- Action buttons on the detail page (Vincent)
+  - Open in Google Maps, share link, save to favourites (saved in the browser,
+ no login)
+- Interactive map on the detail page, with pan and zoom (Matthew)
+
+### Nice to have
+
+If we have time:
+- Pulling extra info (photos, hours) from a second API (Matthew)
+- Compare view, two or three places side by side (Fatima)
+- Directions from the user to the place (Brian)
+- Recently viewed and suggested categories, stored in the browser (Julian)
+- Dark mode and polish pass (Vincent)
+
+### Risks
+
+- OpenTripMap might not have good data for every category, so we may trim the
+category list to the ones that actually work.
+- Any second API gets picked later, once we've checked its licensing and rate
+limits. Features that depend on it stay optional.
+- If the user blocks location access, nearby search falls back to the postal
+code search.
+
 
 ## Wireframes
 
