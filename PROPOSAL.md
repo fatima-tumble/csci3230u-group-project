@@ -22,7 +22,7 @@ Final APIs used will depend on their availability, licensing, restrictions, and 
 
 ## Comparators
 
-The website may be similar to Google Maps or review sites like Yelp because it provides real-world information about locations. 
+The website may be similar to Google Maps or review sites like Yelp and Tripadvisor because it provides real-world information about locations. 
 However, they differ in many ways:
 - This site will focus specifically on location discovery and comparison rather than directions
 - It will organize the locations into different categories and tags
