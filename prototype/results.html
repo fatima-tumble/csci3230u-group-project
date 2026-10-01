@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Places in Toronto - Project Name</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+
+    <body>
+        <header class="header">
+            <h1>Project Name</h1>
+            <nav class="navbar" aria-label="Main">
+                <a href="index.html" class="nav-button">Home</a>
+                <a href="index.html#categories" class="nav-button">Categories</a>
+            </nav>
+        </header>
+
+        <main class="results-page">
+            <form class="results-search" action="results.html" role="search">
+                <label for="results-city">City or postal code</label>
+                <div class="results-search-row">
+                    <input id="results-city" name="city" type="text" value="Toronto" autocomplete="address-level2" />
+                    <button type="submit" class="search-button">Search</button>
+                </div>
+            </form>
+
+            <section aria-labelledby="results-heading">
+                <div class="results-heading-row">
+                    <h2 id="results-heading">Places in Toronto</h2>
+                    <p class="results-count">6 places found</p>
+                </div>
+
+                <nav class="filter-bar" aria-label="Filter by category">
+                    <a href="results.html" class="tag filter-tag" aria-current="page">All</a>
+                    <a href="results.html?category=food" class="tag filter-tag">Food</a>
+                    <a href="results.html?category=entertainment" class="tag filter-tag">Entertainment</a>
+                    <a href="results.html?category=attractions" class="tag filter-tag">Attractions</a>
+                </nav>
+
+                <ul class="place-list">
+                    <li>
+                        <article class="place-card">
+                            <h3><a href="details.html">CN Tower</a></h3>
+                            <p class="place-meta">Attractions <span aria-hidden="true">&middot;</span> 1.2 km away</p>
+                            <p class="place-description">A 553 m communications tower with a glass floor, an outdoor EdgeWalk and views across Lake Ontario.</p>
+                            <ul class="place-tags" aria-label="Tags">
+                                <li class="tag">Landmark</li>
+                                <li class="tag">Views</li>
+                            </ul>
+                        </article>
+                    </li>
+                    <li>
+                        <article class="place-card">
+                            <h3><a href="details.html">St. Lawrence Market</a></h3>
+                            <p class="place-meta">Food <span aria-hidden="true">&middot;</span> 1.8 km away</p>
+                            <p class="place-description">A historic public market with over 120 vendors selling produce, baked goods and the classic peameal bacon sandwich.</p>
+                            <ul class="place-tags" aria-label="Tags">
+                                <li class="tag">Market</li>
+                                <li class="tag">Local</li>
+                            </ul>
+                        </article>
+                    </li>
+                    <li>
+                        <article class="place-card">
+                            <h3><a href="details.html">Royal Ontario Museum</a></h3>
+                            <p class="place-meta">Attractions <span aria-hidden="true">&middot;</span> 3.4 km away</p>
+                            <p class="place-description">Canada's largest museum of world culture and natural history, home to dinosaur galleries and the Crystal wing.</p>
+                            <ul class="place-tags" aria-label="Tags">
+                                <li class="tag">Museum</li>
+                                <li class="tag">History</li>
+                            </ul>
+                        </article>
+                    </li>
+                    <li>
+                        <article class="place-card">
+                            <h3><a href="details.html">Scotiabank Arena</a></h3>
+                            <p class="place-meta">Entertainment <span aria-hidden="true">&middot;</span> 1.0 km away</p>
+                            <p class="place-description">Home of the Maple Leafs and the Raptors, also hosting major concerts throughout the year.</p>
+                            <ul class="place-tags" aria-label="Tags">
+                                <li class="tag">Sports</li>
+                                <li class="tag">Concerts</li>
+                            </ul>
+                        </article>
+                    </li>
+                    <li>
+                        <article class="place-card">
+                            <h3><a href="details.html">Kensington Market</a></h3>
+                            <p class="place-meta">Food <span aria-hidden="true">&middot;</span> 2.6 km away</p>
+                            <p class="place-description">A multicultural neighbourhood packed with cafes, street food, vintage shops and independent grocers.</p>
+                            <ul class="place-tags" aria-label="Tags">
+                                <li class="tag">Street food</li>
+                                <li class="tag">Shopping</li>
+                            </ul>
+                        </article>
+                    </li>
+                    <li>
+                        <article class="place-card">
+                            <h3><a href="details.html">Ripley's Aquarium of Canada</a></h3>
+                            <p class="place-meta">Entertainment <span aria-hidden="true">&middot;</span> 1.3 km away</p>
+                            <p class="place-description">An aquarium with an underwater tunnel, shark lagoon and hands-on touch pools next to the CN Tower.</p>
+                            <ul class="place-tags" aria-label="Tags">
+                                <li class="tag">Family</li>
+                                <li class="tag">Indoor</li>
+                            </ul>
+                        </article>
+                    </li>
+                </ul>
+            </section>
+        </main>
+    </body>
+</html>

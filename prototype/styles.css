@@ -46,3 +46,164 @@ body {
     background-color: black;
     color: white;
 }
+
+a {
+    color: white;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+    outline: 3px solid #8ab4f8;
+    outline-offset: 2px;
+}
+
+.results-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px 32px;
+}
+
+.results-search {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 24px;
+}
+
+.results-search label {
+    font-size: 0.9rem;
+    color: #c4c4c4;
+}
+
+.results-search-row {
+    display: flex;
+    gap: 8px;
+}
+
+.results-search-row input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    background-color: #1e1d1d;
+    color: white;
+    font-size: 1rem;
+}
+
+.search-button {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    background-color: #474747;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.results-heading-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.results-heading-row h2 {
+    margin: 0;
+}
+
+.results-count {
+    margin: 0;
+    color: #c4c4c4;
+}
+
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0 24px;
+}
+
+.filter-tag {
+    text-decoration: none;
+}
+
+.filter-tag:hover {
+    background-color: #2b2b2b;
+}
+
+.filter-tag[aria-current="page"] {
+    background-color: white;
+    color: black;
+    border-color: white;
+}
+
+.place-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.place-card {
+    height: 100%;
+    box-sizing: border-box;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    background-color: #141414;
+}
+
+.place-card h3 {
+    margin: 0 0 4px;
+    font-size: 1.15rem;
+}
+
+.place-card h3 a {
+    text-decoration: none;
+}
+
+.place-card h3 a:hover {
+    text-decoration: underline;
+}
+
+.place-meta {
+    margin: 0 0 10px;
+    font-size: 0.9rem;
+    color: #c4c4c4;
+}
+
+.place-description {
+    margin: 0 0 12px;
+    line-height: 1.4;
+}
+
+.place-tags {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.place-tags .tag {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+}
+
+@media (min-width: 640px) {
+    .place-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 960px) {
+    .place-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
