@@ -32,12 +32,19 @@ interface WikipediaInfo {
     html: string
 }
 
+interface Preview {
+    source: string,
+    height: number,
+    width: number
+}
+
 interface PlaceData {
     xid: string,
     name: string,
     description: string,
     address: Address,
     wikipedia_extracts: WikipediaInfo,
+    preview: Preview,
     kinds: string,
     lat: number,
     lon: number
@@ -123,7 +130,14 @@ export default function Details() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 w-[95%] mx-auto">
             <section>
                 <h1 className="text-2xl font-bold mt-4">{place?.name}</h1>
-                <h4 className="text-sm font-extralight mb-2 text-gray-300">{place?.address.house_number} {place?.address.road}, {place?.address.city}, {place?.address.state}, {place?.address.postcode}</h4>
+                <h4 className="text-sm font-extralight mb-2 text-gray-300">
+                    {[
+                        [place?.address.house_number, place?.address.road].filter(Boolean).join(" "),
+                        place?.address.city, 
+                        place?.address.state, 
+                        place?.address.postcode
+                    ].filter(Boolean).join(", ")}
+                </h4>
                 {/* <div className="flex items-center gap-1 text-xs text-gray-400">
                     <span>1.2 km away</span>
                     <span aria-hidden="true">•</span>
@@ -131,7 +145,14 @@ export default function Details() {
                 </div> */}
                 <div className="mt-4">
                     <h1 className="font-bold text-1xl">Description</h1>
-                    <h4 className="font-light text-gray-400" dangerouslySetInnerHTML={{ __html: place?.wikipedia_extracts.html }}></h4>
+                    {place?.wikipedia_extracts?.html ? (
+                        <h4 className="font-light text-gray-400" dangerouslySetInnerHTML={{ __html: place?.wikipedia_extracts.html }}></h4>
+                    )
+                    :
+                    (
+                        <h4 className="font-light text-gray-400">No description avaliable</h4>
+                    )
+                }
                 </div>
                 <h1 className="mt-4 text-1xl font-bold">Tags</h1>
                 <div className="mt-4 flex flex-row flex-wrap rounded-[10px] gap-3">
@@ -143,12 +164,9 @@ export default function Details() {
                 <div className="mt-4 border-[#494949] border-2 flex flex-col rounded-[10px] min-h-5/6 p-4">
 
                 </div>
-                <h1 className="mt-4 text-1xl font-bold">Gallery</h1>
+                <h1 className="mt-4 text-1xl font-bold">Image</h1>
                 <div className="flex flex-row rounded-[10px] flex-wrap gap-5 mb-4 mt-4">
-                    <GalleryImage />
-                    <GalleryImage />
-                    <GalleryImage />
-                    <GalleryImage />
+                    <GalleryImage src={place?.preview.source.replaceAll(/\d+px/gmi, "250px")} />
                 </div>
             </section>
         </div>
