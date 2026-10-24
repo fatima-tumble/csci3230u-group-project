@@ -9,20 +9,26 @@
    
    <body>
         <header class="header">
-            <h1>Project Name</h1>
-            <nav class="navbar">
+            <h1>
+                <a href="index.html" class="site-title">Project Name</a>
+            </h1>
+            <nav class="navbar" aria-label="Main">
                 <a href="index.html" class="nav-button">Home</a>
                 <a href="#categories" class="nav-button">Categories</a>
             </nav>
         </header>
 
-        <main>
+        <main class="home-page">
             <section class="search-section">
                 <div class="search-container">
                     <h2>Discover places near you</h2>
-                    <input id="city" type="text" placeholder="City or postal code">
-                    <button class="search-button">Search</button>
-
+                    <form class="location-search" action="results.html" role="search" aria-label="Location search">
+                        <label for="city">City or postal code</label>
+                        <div class="location-search-row">
+                            <input id="city" name="city" type="text" autocomplete="address-level2">
+                            <button class="search-button" type="submit">Search</button>
+                        </div>
+                    </form>
                     <p>Or</p>
                     <button class="location-button">Use my location</button>
                 </div>
@@ -30,10 +36,10 @@
 
             <section class="categories" id="categories">
                 <h2>Explore by category</h2>
-                <div class="tag-container">
-                    <span class="tag">Food</span>
-                    <span class="tag">Entertainment</span>
-                    <span class="tag">Attractions</span>
+                <div class="tag-container" aria-label="Category filters">
+                    <a href="index.html?category=food" class="tag filter-tag">Food</a>
+                    <a href="index.html?category=entertainment" class="tag filter-tag">Entertainment</a>
+                    <a href="index.html?category=attractions" class="tag filter-tag">Attractions</a>
                 </div>
             </section>
 
