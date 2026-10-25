@@ -8,35 +8,63 @@ body {
 .header {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    margin-left: 8px;
-    margin-right: 8px;
+    gap: 5px;
+    
+    margin: 0 auto 16px;
+    max-width: 1100px;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.home-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px 32px;
+    box-sizing: border-box;
+}
+
+.site-title {
+    color: white;
+    text-decoration: none;
+}
+
+.site-title:hover {
+    color: gray;
 }
 
 .search-container {
-    max-width: 400px;
+    width: 100%;
     margin: 0 auto;
-    padding: 8px 10px;
+    padding: 16px 16px 36px;
     border-radius: 10px;
     border: 1px solid gray;
     text-align: center;
+    box-sizing: border-box;
 }
 
 .search-container input {
-    text-align: center;
+    text-align: left;
 }
 
-.categories {
-    margin-left: 8px;
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .tag {
-    display: inline-block;
     padding: 8px 10px;
     border-radius: 10px;
     border: 1px solid gray;
+}
+
+.navbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .nav-button {
@@ -45,6 +73,11 @@ body {
     border:1px solid gray;
     background-color: black;
     color: white;
+    text-decoration: none;
+}
+
+.nav-button:hover {
+    background-color: #2b2b2b;
 }
 
 a {
@@ -64,24 +97,28 @@ input:focus-visible {
     padding: 0 16px 32px;
 }
 
-.results-search {
+.results-search, 
+.location-search {
     display: flex;
     flex-direction: column;
     gap: 6px;
     margin-bottom: 24px;
 }
 
-.results-search label {
+.results-search label
+.location-search label {
     font-size: 0.9rem;
     color: #c4c4c4;
 }
 
-.results-search-row {
+.results-search-row,
+.location-search-row {
     display: flex;
     gap: 8px;
 }
 
-.results-search-row input {
+.results-search-row input, 
+.location-search-row input{
     flex: 1;
     min-width: 0;
     padding: 8px 10px;
@@ -92,7 +129,8 @@ input:focus-visible {
     font-size: 1rem;
 }
 
-.search-button {
+.search-button,
+.location-button {
     padding: 8px 14px;
     border-radius: 10px;
     border: 1px solid gray;
@@ -199,6 +237,10 @@ input:focus-visible {
 @media (min-width: 640px) {
     .place-list {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .header {
+        flex-direction: row;
     }
 }
 
