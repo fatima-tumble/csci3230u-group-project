@@ -14,3 +14,14 @@ For this purpose, we are considering the OpenTripMap API which hosts a collectio
 - Julian Cruzet, Discovery Developer - categories, tags, browsing history
 - Brian Chan, Content Developer - detail page, distance and hours, directions
 - Matthew Wong, Integration Developer - OpenTripMap wiring, map components, secondary API
+
+## Development
+
+Install dependencies and start the dev server:
+
+```bash
+npm install
+npm run dev
+```
+
+The app runs on `http://localhost:5173`.
