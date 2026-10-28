@@ -1,3 +1,3 @@
-export default function PlaceMap {
-    
+export default function PlaceMap() {
+    return null;
 }

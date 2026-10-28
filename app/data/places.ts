@@ -7,6 +7,7 @@ export type MockPlace = {
     description: string
     distanceKm: number
     categories: Category[]
+    image?: string
 }
 
 export const mockPlaces = placesData as MockPlace[];
