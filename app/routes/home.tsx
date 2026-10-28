@@ -3,6 +3,7 @@ import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import Header  from "../components/header";
 import Tag from "../components/tags";
+import { categories, type Category } from "../data/categories";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,10 +12,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-const categories = ["Food", "Events", "Entertainment", "Activities"];
-
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   return <>
     <Header />
