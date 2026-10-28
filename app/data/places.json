@@ -1,0 +1,58 @@
+[
+  {
+    "xid": "mock-cn-tower",
+    "name": "CN Tower",
+    "description": "A 553 m communications tower with a glass floor, an outdoor EdgeWalk and views across Lake Ontario.",
+    "distanceKm": 1.2,
+    "categories": ["Activities"]
+  },
+  {
+    "xid": "mock-st-lawrence-market",
+    "name": "St. Lawrence Market",
+    "description": "A historic public market with over 120 vendors selling produce, baked goods and the classic peameal bacon sandwich.",
+    "distanceKm": 1.8,
+    "categories": ["Food"]
+  },
+  {
+    "xid": "mock-royal-ontario-museum",
+    "name": "Royal Ontario Museum",
+    "description": "Canada's largest museum of world culture and natural history, home to dinosaur galleries and the Crystal wing.",
+    "distanceKm": 3.4,
+    "categories": ["Activities", "Entertainment"]
+  },
+  {
+    "xid": "mock-scotiabank-arena",
+    "name": "Scotiabank Arena",
+    "description": "Home of the Maple Leafs and the Raptors, also hosting major concerts throughout the year.",
+    "distanceKm": 1.0,
+    "categories": ["Events", "Entertainment"]
+  },
+  {
+    "xid": "mock-kensington-market",
+    "name": "Kensington Market",
+    "description": "A multicultural neighbourhood packed with cafes, street food, vintage shops and independent grocers.",
+    "distanceKm": 2.6,
+    "categories": ["Food", "Activities"]
+  },
+  {
+    "xid": "mock-ripleys-aquarium",
+    "name": "Ripley's Aquarium of Canada",
+    "description": "An aquarium with an underwater tunnel, shark lagoon and hands-on touch pools next to the CN Tower.",
+    "distanceKm": 1.3,
+    "categories": ["Entertainment"]
+  },
+  {
+    "xid": "mock-massey-hall",
+    "name": "Massey Hall",
+    "description": "A historic concert hall that has hosted jazz, rock and comedy shows since 1894.",
+    "distanceKm": 0.9,
+    "categories": ["Events"]
+  },
+  {
+    "xid": "mock-high-park",
+    "name": "High Park",
+    "description": "A large public park with walking trails, a small zoo and cherry blossoms in the spring.",
+    "distanceKm": 7.5,
+    "categories": ["Activities"]
+  }
+]

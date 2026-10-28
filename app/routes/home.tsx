@@ -1,7 +1,9 @@
+import { useState } from "react";
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import Header  from "../components/header";
 import Tag from "../components/tags";
+import { categories, type Category } from "../data/categories";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,6 +13,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+
   return <>
     <Header />
     <div className="flex items-center justify-between border-[#494949] border-2 flex-col rounded-[10px] m-4 w-[95%] mx-auto">
@@ -25,9 +29,15 @@ export default function Home() {
     <div className="flex justify-between flex-col rounded-[10px] m-4 w-[95%] mx-auto">
         <h1 className="text-2xl font-bold mt-4">Explore by category</h1>
         <div className="mt-4 flex flex-row flex-wrap rounded-[10px] gap-3">
-            <Tag>Test</Tag>
-            <Tag>Test</Tag>
-            <Tag>Test</Tag>
+            {categories.map((category) => (
+              <Tag
+                key={category}
+                selected={selectedCategory === category}
+                onClick={() => setSelectedCategory((prev) => (prev === category ? null : category))}
+              >
+                {category}
+              </Tag>
+            ))}
         </div>
     </div>
   </>
