@@ -16,3 +16,13 @@ export function filterPlacesByCategory<T extends { categories: Category[] }>(pla
   if (category === "All") return places;
   return places.filter((place) => place.categories.includes(category));
 }
+
+export function filterPlacesByQuery<T extends { name: string; description: string }>(places: T[], query: string): T[] {
+  const trimmed = query.trim().toLowerCase();
+  if (!trimmed) return places;
+  return places.filter(
+    (place) =>
+      place.name.toLowerCase().includes(trimmed) ||
+      place.description.toLowerCase().includes(trimmed),
+  );
+}
