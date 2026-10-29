@@ -163,7 +163,17 @@ export default function Details() {
             <section>
                 <h1 className="text-1xl font-bold mt-4">Map</h1>
                 <div className="mt-4 border-[#494949] border-2 flex flex-col rounded-[10px] min-h-5/6 p-4">
-                    {place}
+                    {place.point && Number.isFinite(place.point.lat) && Number.isFinite(place.point.lon) ? (
+                        <PlaceMap
+                            lat={place.point.lat}
+                            lon={place.point.lon}
+                            name={place.name}
+                        />
+                    ) : (
+                        <p className="p-4 text-gray-400">
+                            Map coordinates are unavailable.
+                        </p>
+                    )}
                 </div>
                 <h1 className="mt-4 text-1xl font-bold">Image</h1>
                 <div className="flex flex-row rounded-[10px] flex-wrap gap-5 mb-4 mt-4">

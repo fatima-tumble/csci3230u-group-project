@@ -7,18 +7,18 @@ import {
 
 interface placeMapCoords {
     lat: number;
-    long: number;
+    lon: number;
     name: string;
 }
 
-export default function PlaceMap({ lat, long, name }: placeMapCoords) {
+export default function PlaceMap({ lat, lon, name }: placeMapCoords) {
     return (
-        <MapContainer center={[lat, long]} zoom={13} scrollWheelZoom={false} style={{ height: "150px", width: "100%", }}>
+        <MapContainer center={[lat, lon]} zoom={13} scrollWheelZoom={false} style={{ height: "150px", width: "100%", }}>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker position={[lat, long]}>
+            <Marker position={[lat, lon]}>
                 <Popup>
                     {name}
                 </Popup>
