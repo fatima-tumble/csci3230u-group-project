@@ -17,9 +17,10 @@ For this purpose, we are considering the OpenTripMap API which hosts a collectio
 
 ## Development
 
-Install dependencies and start the dev server:
+Copy `.env.example` to `.env` and fill in a free [OpenTripMap API key](https://opentripmap.io/product). The home and results pages work without it; the detail page needs it to load place info.
 
 ```bash
+cp .env.example .env
 npm install
 npm run dev
 ```
