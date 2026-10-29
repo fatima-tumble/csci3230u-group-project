@@ -38,7 +38,7 @@ export default function PlaceCard({ place }: placeCardProps) {
   return (
     <li>
       <article className="group relative h-full flex flex-col overflow-hidden rounded-[10px] border border-stone-300 bg-white transition-colors hover:border-accent">
-        <div className="aspect-[16/10] w-full overflow-hidden bg-stone-100">
+        <div className="aspect-16/10 w-full overflow-hidden bg-stone-100">
           <PlaceImage place={place} />
         </div>
         <div className="flex flex-1 flex-col gap-3 p-5">
