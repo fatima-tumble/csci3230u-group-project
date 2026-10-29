@@ -1,5 +1,3 @@
-# Project Milestone 0
-
 ## Team Name
 Team Wander
 
