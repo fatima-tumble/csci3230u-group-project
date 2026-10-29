@@ -164,11 +164,9 @@ export default function Details() {
                     </ul>
                     <section className="mt-8">
                         <h2 className="text-xl font-bold">About</h2>
-                        {place.wikipedia_extracts?.html ? (
-                            <div className="mt-2 space-y-3 leading-relaxed text-stone-700" dangerouslySetInnerHTML={{ __html: place.wikipedia_extracts.html }}></div>
-                        ) : (
-                            <p className="mt-2 text-stone-700">No description available.</p>
-                        )}
+                        <p className="mt-2 leading-relaxed text-stone-700">
+                            {place.wikipedia_extracts?.text ?? "No description available."}
+                        </p>
                     </section>
                     <section className="mt-8">
                         <h2 className="text-xl font-bold">Map</h2>
