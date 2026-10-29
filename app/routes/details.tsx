@@ -52,7 +52,7 @@ interface PlaceData {
 }
 
 function GalleryImage({ alt, src }: GalleryImageProps) {
-    return <div className="border-[#494949] border-2 rounded-[10px] aspect-square min-h-50">
+    return <div className="border-stone-300 border-2 rounded-[10px] aspect-square min-h-50">
         <img src={src} className="h-full w-full object-cover" alt={alt ?? ""}></img>
     </div>
 }
@@ -131,7 +131,7 @@ export default function Details() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 w-[95%] mx-auto">
             <section>
                 <h1 className="text-2xl font-bold mt-4">{place?.name}</h1>
-                <h4 className="text-sm font-extralight mb-2 text-gray-300">
+                <h4 className="text-sm font-extralight mb-2 text-stone-600">
                     {[
                         [place?.address.house_number, place?.address.road].filter(Boolean).join(" "),
                         place?.address.city, 
@@ -139,7 +139,7 @@ export default function Details() {
                         place?.address.postcode
                     ].filter(Boolean).join(", ")}
                 </h4>
-                {/* <div className="flex items-center gap-1 text-xs text-gray-400">
+                {/* <div className="flex items-center gap-1 text-xs text-stone-600">
                     <span>1.2 km away</span>
                     <span aria-hidden="true">•</span>
                     <span>Open until 6 PM</span>
@@ -147,11 +147,11 @@ export default function Details() {
                 <div className="mt-4">
                     <h1 className="font-bold text-1xl">Description</h1>
                     {place?.wikipedia_extracts?.html ? (
-                        <h4 className="font-light text-gray-400" dangerouslySetInnerHTML={{ __html: place?.wikipedia_extracts.html }}></h4>
+                        <h4 className="font-light text-stone-600" dangerouslySetInnerHTML={{ __html: place?.wikipedia_extracts.html }}></h4>
                     )
                     :
                     (
-                        <h4 className="font-light text-gray-400">No description avaliable</h4>
+                        <h4 className="font-light text-stone-600">No description avaliable</h4>
                     )
                 }
                 </div>
@@ -162,7 +162,7 @@ export default function Details() {
             </section>
             <section>
                 <h1 className="text-1xl font-bold mt-4">Map</h1>
-                <div className="mt-4 border-[#494949] border-2 flex flex-col rounded-[10px] min-h-5/6 p-4">
+                <div className="mt-4 border-stone-300 border-2 flex flex-col rounded-[10px] min-h-5/6 p-4">
                     {place.point && Number.isFinite(place.point.lat) && Number.isFinite(place.point.lon) ? (
                         <PlaceMap
                             lat={place.point.lat}
