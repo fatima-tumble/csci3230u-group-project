@@ -47,7 +47,7 @@ export default function Results() {
 
   return <>
     <Header />
-    <main className="flex flex-col gap-4 m-4 w-[95%] mx-auto">
+    <main className="flex flex-col gap-4 my-4 px-6 w-full max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mt-4">Places near you</h1>
       <SearchBar value={query} onChange={setQuery} />
       <FilterBar selected={selectedCategory} onSelect={setSelectedCategory} />

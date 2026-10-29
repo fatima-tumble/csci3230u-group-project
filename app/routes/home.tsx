@@ -26,27 +26,30 @@ export default function Home() {
     navigate({ pathname: "/results", search: search.toString() });
   }
 
-  return <>
+  return <div className="flex flex-col min-h-screen">
     <Header />
-    <div className="flex items-center justify-between border-[#494949] border-2 flex-col rounded-[10px] m-4 w-[95%] mx-auto">
-        <h1 className="mt-4 text-2xl font-bold mb-4">Discover places near you</h1>
-        <form onSubmit={handleSearch} role="search" aria-label="Location search" className="flex items-center">
+    <div className="flex items-center justify-between flex-col my-4 px-6 w-full max-w-6xl mx-auto">
+        <h1 className="mt-24 px-4 text-center text-4xl sm:text-5xl font-bold">What do you want to see?</h1>
+        <form onSubmit={handleSearch} role="search" aria-label="Location search" className="flex items-center gap-2 w-full max-w-2xl mt-10 mb-8 p-2 pl-6 bg-white border-2 border-stone-300 rounded-full focus-within:border-brand">
           <label htmlFor="home-search-input" className="sr-only">City or postal code</label>
           <input
             id="home-search-input"
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="text-sm font-bold bg-[#1E1D1D] border-[#494949] border-2 m-4 p-2 rounded-[10px]"
-            placeholder="Enter your postal code or city"
+            className="flex-1 min-w-0 text-sm sm:text-base font-bold bg-transparent outline-none"
+            placeholder="Enter a city or postal code"
           />
-          <button type="submit" className="text-sm font-bold bg-[#474747] p-2 rounded-[10px]">Search</button>
+          <button type="submit" className="text-sm font-bold bg-brand text-white hover:bg-brand/90 py-3 px-5 rounded-full">Search</button>
+          <button type="button" aria-label="Use my location" className="whitespace-nowrap text-sm font-bold bg-accent text-stone-900 hover:bg-accent/90 py-3 px-5 rounded-full">
+            <span aria-hidden="true" className="sm:hidden">📍</span>
+            <span aria-hidden="true" className="hidden sm:inline">Use my location</span>
+          </button>
         </form>
-        <h1 className="text-2xl font-bold mb-4">Or</h1>
-        <button className="text-sm font-bold bg-[#474747] p-2 rounded-[10px] mb-4">Use my location</button>
     </div>
-    <div className="flex justify-between flex-col rounded-[10px] m-4 w-[95%] mx-auto">
-        <h1 className="text-2xl font-bold mt-4">Explore by category</h1>
+    <div className="flex flex-1 flex-col mt-16 mb-6 px-6 w-full max-w-6xl mx-auto">
+      <div className="flex flex-1 flex-col rounded-2xl bg-accent p-6 sm:p-8">
+        <h1 className="text-2xl font-bold">Explore by category</h1>
         <div className="mt-4 flex flex-row flex-wrap rounded-[10px] gap-3">
             {categories.map((category) => (
               <Tag
@@ -58,6 +61,7 @@ export default function Home() {
               </Tag>
             ))}
         </div>
+      </div>
     </div>
-  </>
+  </div>
 }

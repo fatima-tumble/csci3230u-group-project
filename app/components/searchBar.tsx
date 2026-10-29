@@ -18,7 +18,7 @@ export default function SearchBar({ value, onChange, placeholder, label }: searc
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder ?? "Search places by name"}
-        className="w-full text-sm font-bold bg-[#1E1D1D] border-[#494949] border-2 p-2 rounded-[10px]"
+        className="w-full text-sm font-bold bg-white border-stone-300 border-2 p-2 rounded-[10px]"
       />
     </div>
   );

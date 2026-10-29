@@ -1,13 +1,12 @@
 export default function Header() {
     return (
-        <header className="flex items-center justify-between p-4 flex-wrap">
-            <h1 className="text-2xl font-bold mx-[1.75%]">Location</h1>
-            <input type="text" className="text-sm font-bold bg-[#1E1D1D] border-[#494949] border-2 ml-auto mr-4 p-2 rounded-[10px]" placeholder="Search"/>
+        <header className="flex items-center justify-between gap-x-4 py-4 px-6 w-full max-w-6xl mx-auto flex-wrap bg-bone text-brand">
+            <h1 className="text-2xl sm:text-3xl font-bold">Location</h1>
             <nav>
-                <ul className="flex gap-4 mx-[1.75%]">
-                    <li><a href="/" className="">Home</a></li>
-                    <li><a href="/explore" className="">Explore</a></li>
-                    <li><a href="/about" className="">About</a></li>
+                <ul className="flex gap-4 sm:gap-6 text-base sm:text-lg font-medium">
+                    <li><a href="/" className="hover:underline">Home</a></li>
+                    <li><a href="/explore" className="hover:underline">Explore</a></li>
+                    <li><a href="/about" className="hover:underline">About</a></li>
                 </ul>
             </nav>
         </header>
