@@ -11,7 +11,7 @@ import { categories, type CategoryFilter } from "../data/categories";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Results" },
+    { title: "Results · Wander" },
     { name: "description", content: "Browse places near you." },
   ];
 }

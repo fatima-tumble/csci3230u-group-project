@@ -8,8 +8,8 @@ import { categories, type Category } from "../data/categories";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Home" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Wander" },
+    { name: "description", content: "Discover places near you." },
   ];
 }
 
