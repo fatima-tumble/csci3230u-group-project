@@ -1,7 +1,7 @@
 # Project Milestone 0
 
 ## Team Name
-TBD
+Team Wander
 
 ## Topic and Candidate API 
 We plan to build an application focusing on food spots such as restaurants, cafes, and fast food chains.
