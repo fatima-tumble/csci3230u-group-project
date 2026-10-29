@@ -1,9 +1,11 @@
+import "leaflet/dist/leaflet.css";
+
 import {
     MapContainer,
     TileLayer,
     Marker,
     Popup,
-} from 'https://cdn.esm.sh/react-leaflet'
+} from 'react-leaflet'
 
 interface placeMapCoords {
     lat: number;
