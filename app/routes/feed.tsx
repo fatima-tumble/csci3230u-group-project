@@ -69,7 +69,7 @@ function PopularPlaces() {
           {places.map((place) => (
             <li key={place.xid} className="w-44 shrink-0 snap-start">
               <Link to={`/places/${place.xid}`} className="flex h-full flex-col overflow-hidden rounded-[10px] border border-stone-300 bg-white hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
-                <div className="aspect-4/3 w-full bg-stone-100">
+                <div className="aspect-4/3 w-full shrink-0 overflow-hidden bg-stone-100">
                   {place.place_image && <img src={place.place_image.replace(/\/\d+px-/, "/330px-")} alt="" loading="lazy" className="h-full w-full object-cover" />}
                 </div>
                 <div className="flex flex-col gap-1 p-3">

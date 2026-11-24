@@ -71,7 +71,7 @@ export default function VisitCard({ visit, showAuthor = true, currentUsername, o
         {visit.blurb && <p className="mt-3 whitespace-pre-line text-stone-900">{visit.blurb}</p>}
 
         {visit.photos.length > 0 && (
-          <ul className={`mt-3 grid gap-2 ${visit.photos.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+          <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {visit.photos.map((src, i) => (
               <li key={src}>
                 <a href={src} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-brand">
