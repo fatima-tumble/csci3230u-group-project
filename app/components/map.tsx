@@ -15,7 +15,7 @@ interface placeMapCoords {
 
 export default function PlaceMap({ lat, lon, name }: placeMapCoords) {
     return (
-        <MapContainer center={[lat, lon]} zoom={13} scrollWheelZoom={false} style={{ height: "150px", width: "100%", }}>
+        <MapContainer center={[lat, lon]} zoom={13} scrollWheelZoom={false} style={{ height: "100%", width: "100%", }}>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

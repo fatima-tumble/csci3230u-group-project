@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom"
 import { Link } from "react-router"
 import { useState, useEffect } from "react"
 import PlaceMap from "../components/map"
+import { categoriesFromKinds } from "../data/categories"
+import { addRecentlyViewedPlace } from "../hooks/useRecentlyViewed"
 
 
 // Technically it should be hidden through server proxy
@@ -49,8 +51,31 @@ interface PlaceData {
     preview: Preview,
     image?: string,
     kinds: string,
+    point: Point
+}
+
+interface Point {
     lat: number,
     lon: number
+}
+
+function openDirections(place: PlaceData) {
+    if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser")
+        return
+    }
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude
+        const lon = position.coords.longitude
+        const destination = `${place.point.lat},${place.point.lon}`
+
+        const url = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${destination}`;
+        window.open(url, "_blank")
+    }, (error) => {
+        console.error("Error getting geolocation:", error)
+        alert("Unable to retrieve your location. Please check your browser settings.")
+    })
 }
 
 function PlaceImage({ alt, src }: GalleryImageProps) {
@@ -127,6 +152,17 @@ export default function Details() {
         loadData()
     }, [xid])
 
+    // Record the place in "Recently viewed" once it has loaded successfully
+    useEffect(() => {
+        if (!place?.xid || !place.name) return
+        addRecentlyViewedPlace({
+            xid: place.xid,
+            name: place.name,
+            image: place.preview?.source,
+            categories: categoriesFromKinds(place.kinds),
+        })
+    }, [place?.xid])
+
 
     const backLink = <Link to="/results" className="inline-block font-bold text-brand hover:underline">← Back to results</Link>
 
@@ -161,6 +197,15 @@ export default function Details() {
                     )}
                     <ul aria-label="Tags" className="mt-4 flex flex-row flex-wrap gap-2">
                         {tags.map((tag, index) => <li key={index}><Tag>{tag}</Tag></li>)}
+                    </ul>
+                    <ul className="mt-4 flex flex-row flex-wrap gap-2">
+                        <button
+                            type="button"
+                            className="inline-flex items-center justify-center rounded-md border py-2 px-5 text-xs font-medium cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                            onClick={() => openDirections(place)}
+                        >
+                        Directions
+                        </button>
                     </ul>
                     <section className="mt-8">
                         <h2 className="text-xl font-bold">About</h2>
