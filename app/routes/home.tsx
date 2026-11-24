@@ -28,12 +28,16 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+type SearchMode = "location" | "name";
+
 export default function Home() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [mode, setMode] = useState<SearchMode>("location");
   const [city, setCity] = useState("");
   const [region, setRegion] = useState("");
   const [country, setCountry] = useState("");
+  const [name, setName] = useState("");
   const [suggestions, setSuggestions] = useState<MockPlace[]>([]);
 
   useEffect(() => {
@@ -53,10 +57,15 @@ export default function Home() {
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    const parts = [city.trim(), region.trim(), country.trim()].filter(Boolean);
-    const q = parts.join(", ");
     const search = createSearchParams();
-    if (q) search.set("q", q);
+    if (mode === "name") {
+      const n = name.trim();
+      if (n) search.set("name", n);
+    } else {
+      const parts = [city.trim(), region.trim(), country.trim()].filter(Boolean);
+      const q = parts.join(", ");
+      if (q) search.set("q", q);
+    }
     if (selectedCategory) search.set("category", selectedCategory);
     navigate({ pathname: "/results", search: search.toString() });
   }
@@ -65,41 +74,79 @@ export default function Home() {
     <Header />
     <div className="flex items-center justify-between flex-col my-4 px-6 w-full max-w-6xl mx-auto">
         <h1 className="mt-24 px-4 text-center text-4xl sm:text-5xl font-bold">What do you want to see?</h1>
-        <form onSubmit={handleSearch} role="search" aria-label="Location search" className="flex flex-wrap items-center gap-2 w-full max-w-2xl mt-10 mb-8 p-2 pl-4 bg-white border-2 border-stone-300 rounded-full focus-within:border-brand">
-          <label htmlFor="home-city-input" className="sr-only">City</label>
-          <input
-            id="home-city-input"
-            type="search"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
-            placeholder="City"
-          />
-          <span aria-hidden="true" className="h-6 w-px bg-stone-300" />
-          <label htmlFor="home-region-input" className="sr-only">State or province</label>
-          <input
-            id="home-region-input"
-            type="search"
-            value={region}
-            onChange={(e) => setRegion(e.target.value)}
-            className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
-            placeholder="State / Province"
-          />
-          <span aria-hidden="true" className="h-6 w-px bg-stone-300" />
-          <label htmlFor="home-country-input" className="sr-only">Country</label>
-          <input
-            id="home-country-input"
-            type="search"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
-            placeholder="Country (optional)"
-          />
-          <button type="submit" className="text-sm font-bold bg-brand text-white hover:bg-brand/90 py-3 px-5 rounded-full">Search</button>
-          <button type="button" aria-label="Use my location" className="whitespace-nowrap text-sm font-bold bg-accent text-stone-900 hover:bg-accent/90 py-3 px-5 rounded-full">
-            <span aria-hidden="true" className="sm:hidden">📍</span>
-            <span aria-hidden="true" className="hidden sm:inline">Use my location</span>
+        <div role="radiogroup" aria-label="Search mode" className="mt-8 flex gap-2">
+          <button
+            type="button"
+            role="radio"
+            aria-checked={mode === "location"}
+            onClick={() => setMode("location")}
+            className={`rounded-full px-4 py-2 text-sm font-bold ${mode === "location" ? "bg-brand text-white" : "bg-white text-stone-700 border-2 border-stone-300 hover:border-brand"}`}
+          >
+            By location
           </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked={mode === "name"}
+            onClick={() => setMode("name")}
+            className={`rounded-full px-4 py-2 text-sm font-bold ${mode === "name" ? "bg-brand text-white" : "bg-white text-stone-700 border-2 border-stone-300 hover:border-brand"}`}
+          >
+            By name
+          </button>
+        </div>
+        <form onSubmit={handleSearch} role="search" aria-label={mode === "name" ? "Name search" : "Location search"} className="flex flex-wrap items-center gap-2 w-full max-w-2xl mt-4 mb-8 p-2 pl-4 bg-white border-2 border-stone-300 rounded-full focus-within:border-brand">
+          {mode === "location" ? (
+            <>
+              <label htmlFor="home-city-input" className="sr-only">City</label>
+              <input
+                id="home-city-input"
+                type="search"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
+                placeholder="City"
+              />
+              <span aria-hidden="true" className="h-6 w-px bg-stone-300" />
+              <label htmlFor="home-region-input" className="sr-only">State or province</label>
+              <input
+                id="home-region-input"
+                type="search"
+                value={region}
+                onChange={(e) => setRegion(e.target.value)}
+                className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
+                placeholder="State / Province"
+              />
+              <span aria-hidden="true" className="h-6 w-px bg-stone-300" />
+              <label htmlFor="home-country-input" className="sr-only">Country</label>
+              <input
+                id="home-country-input"
+                type="search"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
+                placeholder="Country (optional)"
+              />
+            </>
+          ) : (
+            <>
+              <label htmlFor="home-name-input" className="sr-only">Place name</label>
+              <input
+                id="home-name-input"
+                type="search"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
+                placeholder="Place name (e.g. CN Tower, Pizza Pizza)"
+              />
+            </>
+          )}
+          <button type="submit" className="text-sm font-bold bg-brand text-white hover:bg-brand/90 py-3 px-5 rounded-full">Search</button>
+          {mode === "location" && (
+            <button type="button" aria-label="Use my location" className="whitespace-nowrap text-sm font-bold bg-accent text-stone-900 hover:bg-accent/90 py-3 px-5 rounded-full">
+              <span aria-hidden="true" className="sm:hidden">📍</span>
+              <span aria-hidden="true" className="hidden sm:inline">Use my location</span>
+            </button>
+          )}
         </form>
     </div>
     <div className="flex flex-1 flex-col mt-16 mb-6 px-6 w-full max-w-6xl mx-auto">

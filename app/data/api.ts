@@ -89,7 +89,38 @@ function normalizeThumb(src?: string): string | undefined {
   return src.replace(/\/\d+px-/, "/960px-");
 }
 
+type NominatimItem = {
+  place_id: number;
+  osm_type: string;
+  osm_id: number;
+  lat: string;
+  lon: string;
+  display_name: string;
+  name?: string;
+  type?: string;
+  class?: string;
+};
+
+export async function searchPlacesByName(name: string, signal?: AbortSignal): Promise<MockPlace[]> {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(name)}&format=jsonv2&limit=30&addressdetails=0`;
+  const res = await fetch(url, { signal, headers: { Accept: "application/json" } });
+  if (!res.ok) throw new Error(`Nominatim error: ${res.status}`);
+  const data: NominatimItem[] = await res.json();
+
+  return data.map((item) => {
+    const kinds = [item.class, item.type].filter(Boolean).join(",");
+    return {
+      xid: `osm-${item.osm_type}-${item.osm_id}`,
+      name: item.name || item.display_name.split(",")[0],
+      description: item.display_name,
+      distanceKm: 0,
+      categories: mapKindsToCategories(kinds),
+    };
+  });
+}
+
 export async function fetchPlaceImage(xid: string, signal?: AbortSignal): Promise<string | null> {
+  if (xid.startsWith("osm-")) return null;
   const res = await fetch(`https://api.opentripmap.com/0.1/en/places/xid/${xid}?apikey=${API_KEY}`, { signal });
   if (!res.ok) return null;
   const data = await res.json();

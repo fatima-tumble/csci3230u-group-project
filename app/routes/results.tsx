@@ -8,7 +8,7 @@ import PlaceCard from "../components/placeCard";
 import SearchBar from "../components/searchBar";
 import { filterPlacesByQuery, type MockPlace } from "../data/places";
 import { categories, type CategoryFilter } from "../data/categories";
-import { fetchNearbyPlaces, geocode } from "../data/api";
+import { fetchNearbyPlaces, geocode, searchPlacesByName } from "../data/api";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -33,8 +33,10 @@ function readPageParam(raw: string | null): number {
 
 export default function Results() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const nameQuery = (searchParams.get("name") ?? "").trim();
   const queryLocation = (searchParams.get("q") ?? "").trim();
-  const isDefault = queryLocation.length === 0;
+  const isNameMode = nameQuery.length > 0;
+  const isDefault = !isNameMode && queryLocation.length === 0;
   const location = isDefault ? DEFAULT_LOCATION : queryLocation;
 
   const [nameFilter, setNameFilter] = useState("");
@@ -89,6 +91,16 @@ export default function Results() {
 
     (async () => {
       try {
+        if (isNameMode) {
+          setLocationLabel(null);
+          const results = await searchPlacesByName(nameQuery, controller.signal);
+          const filtered = selectedCategory === "All"
+            ? results
+            : results.filter((p) => p.categories.includes(selectedCategory));
+          setPlaces(filtered);
+          setLoading(false);
+          return;
+        }
         const geo = await geocode(location, controller.signal);
         if (!geo) {
           setPlaces([]);
@@ -109,14 +121,14 @@ export default function Results() {
     })();
 
     return () => controller.abort();
-  }, [location, selectedCategory]);
+  }, [isNameMode, nameQuery, location, selectedCategory]);
 
   const visiblePlaces = filterPlacesByQuery(places, nameFilter);
   const pageCount = Math.max(1, Math.ceil(visiblePlaces.length / PAGE_SIZE));
   const page = Math.min(Math.max(1, requestedPage), pageCount);
   const pagedPlaces = visiblePlaces.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const shortLabel = locationLabel?.split(",")[0] ?? location;
-  const heading = `Places near ${shortLabel}`;
+  const heading = isNameMode ? `Results for "${nameQuery}"` : `Places near ${shortLabel}`;
 
   return <>
     <Header />
@@ -125,6 +137,11 @@ export default function Results() {
       {isDefault && !loading && !error && (
         <p className="text-sm text-stone-600">
           Showing a default view. Search for a city or postal code on the home page to see places near you.
+        </p>
+      )}
+      {isNameMode && !loading && !error && (
+        <p className="text-sm text-stone-600">
+          Showing matches by name. Switch to location search on the home page to browse nearby places.
         </p>
       )}
       <SearchBar value={nameFilter} onChange={setNameFilter} />
