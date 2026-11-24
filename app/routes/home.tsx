@@ -1,14 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createSearchParams, useNavigate } from "react-router";
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import Header  from "../components/header";
 import Tag from "../components/tags";
+import PlaceCard from "../components/placeCard";
 import RecentlyViewed from "../components/recentlyViewed";
 import SuggestedCategories from "../components/suggestedCategories";
 import { categories, type Category } from "../data/categories";
 import { suggestCategories } from "../data/recentlyViewed";
 import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
+import { fetchNearbyPlaces, geocode } from "../data/api";
+import type { MockPlace } from "../data/places";
+
+const SUGGESTION_SEED_LOCATION = "Toronto";
+const SUGGESTION_COUNT = 3;
+
+function pickRandom<T>(arr: T[], n: number): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy.slice(0, n);
+}
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -23,6 +38,22 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const { places: recentPlaces, clear: clearRecent } = useRecentlyViewed();
   const suggested = suggestCategories(recentPlaces);
+  const [suggestions, setSuggestions] = useState<MockPlace[]>([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    (async () => {
+      try {
+        const geo = await geocode(SUGGESTION_SEED_LOCATION, controller.signal);
+        if (!geo) return;
+        const all = await fetchNearbyPlaces(geo.lat, geo.lon, "All", controller.signal);
+        setSuggestions(pickRandom(all, SUGGESTION_COUNT));
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") setSuggestions([]);
+      }
+    })();
+    return () => controller.abort();
+  }, []);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -74,5 +105,21 @@ export default function Home() {
       </div>
     </div>
     <RecentlyViewed places={recentPlaces} onClear={clearRecent} />
+    {suggestions.length > 0 && (
+      <section aria-labelledby="suggested-heading" className="mb-12 px-6 w-full max-w-6xl mx-auto">
+        <h2 id="suggested-heading" className="text-2xl font-bold">Suggested for you</h2>
+        <ul aria-label="Suggested places" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {suggestions.map((place) => (
+            <PlaceCard
+              key={place.xid}
+              place={place}
+              isSelected={false}
+              placeLimit={false}
+              onToggle={() => {}}
+            />
+          ))}
+        </ul>
+      </section>
+    )}
   </div>
 }
