@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom"
 import { Link } from "react-router"
 import { useState, useEffect } from "react"
 import PlaceMap from "../components/map"
+import { categoriesFromKinds } from "../data/categories"
+import { addRecentlyViewedPlace } from "../hooks/useRecentlyViewed"
 
 
 // Technically it should be hidden through server proxy
@@ -126,6 +128,17 @@ export default function Details() {
         }
         loadData()
     }, [xid])
+
+    // Record the place in "Recently viewed" once it has loaded successfully
+    useEffect(() => {
+        if (!place?.xid || !place.name) return
+        addRecentlyViewedPlace({
+            xid: place.xid,
+            name: place.name,
+            image: place.preview?.source,
+            categories: categoriesFromKinds(place.kinds),
+        })
+    }, [place?.xid])
 
 
     const backLink = <Link to="/results" className="inline-block font-bold text-brand hover:underline">← Back to results</Link>
