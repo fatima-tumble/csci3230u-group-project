@@ -31,7 +31,9 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-  const [query, setQuery] = useState("");
+  const [city, setCity] = useState("");
+  const [region, setRegion] = useState("");
+  const [country, setCountry] = useState("");
   const [suggestions, setSuggestions] = useState<MockPlace[]>([]);
 
   useEffect(() => {
@@ -51,8 +53,10 @@ export default function Home() {
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
+    const parts = [city.trim(), region.trim(), country.trim()].filter(Boolean);
+    const q = parts.join(", ");
     const search = createSearchParams();
-    if (query.trim()) search.set("q", query.trim());
+    if (q) search.set("q", q);
     if (selectedCategory) search.set("category", selectedCategory);
     navigate({ pathname: "/results", search: search.toString() });
   }
@@ -61,15 +65,35 @@ export default function Home() {
     <Header />
     <div className="flex items-center justify-between flex-col my-4 px-6 w-full max-w-6xl mx-auto">
         <h1 className="mt-24 px-4 text-center text-4xl sm:text-5xl font-bold">What do you want to see?</h1>
-        <form onSubmit={handleSearch} role="search" aria-label="Location search" className="flex items-center gap-2 w-full max-w-2xl mt-10 mb-8 p-2 pl-6 bg-white border-2 border-stone-300 rounded-full focus-within:border-brand">
-          <label htmlFor="home-search-input" className="sr-only">City or postal code</label>
+        <form onSubmit={handleSearch} role="search" aria-label="Location search" className="flex flex-wrap items-center gap-2 w-full max-w-2xl mt-10 mb-8 p-2 pl-4 bg-white border-2 border-stone-300 rounded-full focus-within:border-brand">
+          <label htmlFor="home-city-input" className="sr-only">City</label>
           <input
-            id="home-search-input"
+            id="home-city-input"
             type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 min-w-0 text-sm sm:text-base font-bold bg-transparent outline-none"
-            placeholder="Enter a city or postal code"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
+            placeholder="City"
+          />
+          <span aria-hidden="true" className="h-6 w-px bg-stone-300" />
+          <label htmlFor="home-region-input" className="sr-only">State or province</label>
+          <input
+            id="home-region-input"
+            type="search"
+            value={region}
+            onChange={(e) => setRegion(e.target.value)}
+            className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
+            placeholder="State / Province"
+          />
+          <span aria-hidden="true" className="h-6 w-px bg-stone-300" />
+          <label htmlFor="home-country-input" className="sr-only">Country</label>
+          <input
+            id="home-country-input"
+            type="search"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
+            placeholder="Country (optional)"
           />
           <button type="submit" className="text-sm font-bold bg-brand text-white hover:bg-brand/90 py-3 px-5 rounded-full">Search</button>
           <button type="button" aria-label="Use my location" className="whitespace-nowrap text-sm font-bold bg-accent text-stone-900 hover:bg-accent/90 py-3 px-5 rounded-full">
