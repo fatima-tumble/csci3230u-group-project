@@ -3,10 +3,13 @@ import CategoryTags from "./categoryTags";
 import type { MockPlace } from "../data/places";
 
 type placeCardProps = {
-    place: MockPlace
+    place: MockPlace;
+    isSelected: boolean;
+    placeLimit: boolean;
+    onToggle: (placeId: string) => void;
 }
 
-function PlaceImage({ place }: placeCardProps) {
+function PlaceImage({ place }: {place: MockPlace}) {
   if (place.image) {
     return (
       <img
@@ -33,7 +36,7 @@ function PlaceImage({ place }: placeCardProps) {
   );
 }
 
-export default function PlaceCard({ place }: placeCardProps) {
+export default function PlaceCard({ place, isSelected, placeLimit, onToggle, }: placeCardProps) {
   const primaryCategory = place.categories[0];
   return (
     <li>
@@ -57,6 +60,16 @@ export default function PlaceCard({ place }: placeCardProps) {
           </p>
           <p className="flex-1 text-sm leading-relaxed text-stone-700 line-clamp-3">{place.description}</p>
           <CategoryTags categories={place.categories} />
+
+          <button type="button"
+                  onClick={() => onToggle(place.xid)}
+                  aria-pressed={isSelected}
+                  disabled={!isSelected && placeLimit}
+                  className={`relative z-10 self-start rounded-md border border-brand px-4 py-2 text-sm font-semibold text-brand transition-colors hover:bg-brand/50 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50
+                             ${isSelected ? "bg-brand text-white" : "bg-white text-brand"}`}
+                  >
+                  {isSelected ? "Added to comparison" : "Add to compare"}
+          </button>
         </div>
       </article>
     </li>
