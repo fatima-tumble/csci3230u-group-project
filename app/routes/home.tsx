@@ -4,7 +4,11 @@ import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import Header  from "../components/header";
 import Tag from "../components/tags";
+import RecentlyViewed from "../components/recentlyViewed";
+import SuggestedCategories from "../components/suggestedCategories";
 import { categories, type Category } from "../data/categories";
+import { suggestCategories } from "../data/recentlyViewed";
+import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -17,6 +21,8 @@ export default function Home() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [query, setQuery] = useState("");
+  const { places: recentPlaces, clear: clearRecent } = useRecentlyViewed();
+  const suggested = suggestCategories(recentPlaces);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -50,7 +56,11 @@ export default function Home() {
     <div className="flex flex-1 flex-col mt-16 mb-6 px-6 w-full max-w-6xl mx-auto">
       <div className="flex flex-1 flex-col rounded-2xl bg-accent p-6 sm:p-8">
         <h1 className="text-2xl font-bold">Explore by category</h1>
-        <div className="mt-4 flex flex-row flex-wrap rounded-[10px] gap-3">
+        <div className="mt-4">
+          <SuggestedCategories categories={suggested} />
+          {suggested.length > 0 && <h2 className="text-lg font-bold mb-3">All categories</h2>}
+        </div>
+        <div className="flex flex-row flex-wrap rounded-[10px] gap-3">
             {categories.map((category) => (
               <Tag
                 key={category}
@@ -63,5 +73,6 @@ export default function Home() {
         </div>
       </div>
     </div>
+    <RecentlyViewed places={recentPlaces} onClear={clearRecent} />
   </div>
 }
