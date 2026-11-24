@@ -5,4 +5,5 @@ export default [
   route("results", "routes/results.tsx"),
   route("places/:xid", "routes/details.tsx"),
   route("compare", "routes/compare.tsx"),
+  route("about", "routes/about.tsx"),
 ] satisfies RouteConfig;
