@@ -4,6 +4,7 @@ export type Profile = {
   display_name: string | null
   bio: string | null
   avatar_url: string | null
+  is_private?: boolean
   created_at: string
 }
 

@@ -4,6 +4,7 @@ import AccountMenu from "./accountMenu";
 const navItems = [
     { to: "/", label: "Home" },
     { to: "/results", label: "Explore" },
+    { to: "/feed", label: "Feed" },
     { to: "/about", label: "About" },
 ];
 

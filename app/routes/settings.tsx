@@ -4,6 +4,7 @@ import Header from "../components/header";
 import FormField from "../components/formField";
 import Button from "../components/button";
 import Avatar from "../components/avatar";
+import PrivacySettings from "../components/privacySettings";
 import { useAuth } from "../context/auth";
 import {
   MAX_BIO,
@@ -268,6 +269,7 @@ export default function Settings() {
       ) : (
         <>
           <Section title="Profile"><ProfileForm /></Section>
+          <Section title="Privacy"><PrivacySettings /></Section>
           <Section title="Password"><PasswordForm /></Section>
           <Section title="Delete account" tone="danger"><DeleteAccount /></Section>
         </>
