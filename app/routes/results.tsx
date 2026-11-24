@@ -18,11 +18,17 @@ export function meta({}: Route.MetaArgs) {
 }
 
 const DEFAULT_LOCATION = "Toronto";
+const PAGE_SIZE = 9;
 
 function readCategoryParam(raw: string | null): CategoryFilter {
   if (!raw) return "All";
   const match = (categories as readonly string[]).find((c) => c.toLowerCase() === raw.toLowerCase());
   return (match as CategoryFilter) ?? "All";
+}
+
+function readPageParam(raw: string | null): number {
+  const n = Number.parseInt(raw ?? "", 10);
+  return Number.isFinite(n) && n > 0 ? n : 1;
 }
 
 export default function Results() {
@@ -41,16 +47,40 @@ export default function Results() {
   const [error, setError] = useState<string | null>(null);
   const [locationLabel, setLocationLabel] = useState<string | null>(null);
 
+  const requestedPage = readPageParam(searchParams.get("page"));
+
   useEffect(() => {
     setSearchParams(
       (prev) => {
         if (selectedCategory !== "All") prev.set("category", selectedCategory);
         else prev.delete("category");
+        prev.delete("page");
         return prev;
       },
       { replace: true },
     );
   }, [selectedCategory]);
+
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        prev.delete("page");
+        return prev;
+      },
+      { replace: true },
+    );
+  }, [nameFilter]);
+
+  function goToPage(next: number) {
+    setSearchParams(
+      (prev) => {
+        if (next <= 1) prev.delete("page");
+        else prev.set("page", String(next));
+        return prev;
+      },
+      { replace: false },
+    );
+  }
 
   useEffect(() => {
     const controller = new AbortController();
@@ -82,6 +112,9 @@ export default function Results() {
   }, [location, selectedCategory]);
 
   const visiblePlaces = filterPlacesByQuery(places, nameFilter);
+  const pageCount = Math.max(1, Math.ceil(visiblePlaces.length / PAGE_SIZE));
+  const page = Math.min(Math.max(1, requestedPage), pageCount);
+  const pagedPlaces = visiblePlaces.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const shortLabel = locationLabel?.split(",")[0] ?? location;
   const heading = `Places near ${shortLabel}`;
 
@@ -109,11 +142,36 @@ export default function Results() {
           }}
         />
       ) : (
-        <ul aria-label="Places" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {visiblePlaces.map((place) => (
-            <PlaceCard key={place.xid} place={place} />
-          ))}
-        </ul>
+        <>
+          <ul aria-label="Places" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {pagedPlaces.map((place) => (
+              <PlaceCard key={place.xid} place={place} />
+            ))}
+          </ul>
+          {pageCount > 1 && (
+            <nav aria-label="Pagination" className="mt-4 flex items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => goToPage(page - 1)}
+                disabled={page <= 1}
+                className="rounded-full border-2 border-stone-300 bg-white px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-40 hover:border-brand"
+              >
+                Previous
+              </button>
+              <span className="text-sm text-stone-700" aria-live="polite">
+                Page {page} of {pageCount}
+              </span>
+              <button
+                type="button"
+                onClick={() => goToPage(page + 1)}
+                disabled={page >= pageCount}
+                className="rounded-full border-2 border-stone-300 bg-white px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-40 hover:border-brand"
+              >
+                Next
+              </button>
+            </nav>
+          )}
+        </>
       )}
     </main>
   </>
