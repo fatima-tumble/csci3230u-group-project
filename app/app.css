@@ -16,3 +16,7 @@ html,
 body {
   @apply bg-bone text-stone-900;
 }
+
+button:not(:disabled) {
+  cursor: pointer;
+}
