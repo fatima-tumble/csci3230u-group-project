@@ -6,8 +6,9 @@ import FilterBar from "../components/filterBar";
 import NoPlacesFound from "../components/noPlacesFound";
 import PlaceCard from "../components/placeCard";
 import SearchBar from "../components/searchBar";
-import { mockPlaces, filterPlacesByCategory, filterPlacesByQuery } from "../data/places";
+import { filterPlacesByQuery, type MockPlace } from "../data/places";
 import { categories, type CategoryFilter } from "../data/categories";
+import { fetchNearbyPlaces, geocode } from "../data/api";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -24,39 +25,85 @@ function readCategoryParam(raw: string | null): CategoryFilter {
 
 export default function Results() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const location = searchParams.get("q") ?? "";
+  const [nameFilter, setNameFilter] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>(
     readCategoryParam(searchParams.get("category")),
   );
 
+  const [places, setPlaces] = useState<MockPlace[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [locationLabel, setLocationLabel] = useState<string | null>(null);
+
   useEffect(() => {
     setSearchParams(
       (prev) => {
-        if (query.trim()) prev.set("q", query.trim());
-        else prev.delete("q");
         if (selectedCategory !== "All") prev.set("category", selectedCategory);
         else prev.delete("category");
         return prev;
       },
       { replace: true },
     );
-  }, [query, selectedCategory]);
+  }, [selectedCategory]);
 
-  const byCategory = filterPlacesByCategory(mockPlaces, selectedCategory);
-  const visiblePlaces = filterPlacesByQuery(byCategory, query);
+  useEffect(() => {
+    if (!location.trim()) {
+      setPlaces([]);
+      setLocationLabel(null);
+      setError(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    setLoading(true);
+    setError(null);
+
+    (async () => {
+      try {
+        const geo = await geocode(location, controller.signal);
+        if (!geo) {
+          setPlaces([]);
+          setLocationLabel(null);
+          setError(`Couldn't find "${location}". Try a different city or postal code.`);
+          setLoading(false);
+          return;
+        }
+        setLocationLabel(geo.label);
+        const results = await fetchNearbyPlaces(geo.lat, geo.lon, selectedCategory, controller.signal);
+        setPlaces(results);
+        setLoading(false);
+      } catch (err) {
+        if ((err as Error).name === "AbortError") return;
+        setError("Something went wrong loading places. Try again.");
+        setLoading(false);
+      }
+    })();
+
+    return () => controller.abort();
+  }, [location, selectedCategory]);
+
+  const visiblePlaces = filterPlacesByQuery(places, nameFilter);
+  const heading = locationLabel ? `Places near ${locationLabel.split(",")[0]}` : "Places near you";
 
   return <>
     <Header />
     <main className="flex flex-col gap-4 my-4 px-6 w-full max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mt-4">Places near you</h1>
-      <SearchBar value={query} onChange={setQuery} />
+      <h1 className="text-2xl font-bold mt-4">{heading}</h1>
+      <SearchBar value={nameFilter} onChange={setNameFilter} />
       <FilterBar selected={selectedCategory} onSelect={setSelectedCategory} />
-      {visiblePlaces.length === 0 ? (
+      {!location.trim() ? (
+        <p className="text-stone-600">Enter a city or postal code on the home page to see places.</p>
+      ) : loading ? (
+        <p role="status" className="text-stone-600">Loading places…</p>
+      ) : error ? (
+        <p role="alert" className="text-stone-700">{error}</p>
+      ) : visiblePlaces.length === 0 ? (
         <NoPlacesFound
           category={selectedCategory}
           onShowAll={() => {
             setSelectedCategory("All");
-            setQuery("");
+            setNameFilter("");
           }}
         />
       ) : (
