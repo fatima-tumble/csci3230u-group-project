@@ -5,6 +5,8 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --color-bone: #F4E7E1;
   --color-brand: #D5451B;
+  /* Darker brand for text and white-on-brand buttons: 6:1 on white, passes WCAG AA */
+  --color-brand-dark: #B23A16;
   --color-accent: #FF9B45;
 }
 
