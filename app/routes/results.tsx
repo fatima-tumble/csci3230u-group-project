@@ -17,6 +17,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+const DEFAULT_LOCATION = "Toronto";
+
 function readCategoryParam(raw: string | null): CategoryFilter {
   if (!raw) return "All";
   const match = (categories as readonly string[]).find((c) => c.toLowerCase() === raw.toLowerCase());
@@ -25,7 +27,10 @@ function readCategoryParam(raw: string | null): CategoryFilter {
 
 export default function Results() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const location = searchParams.get("q") ?? "";
+  const queryLocation = (searchParams.get("q") ?? "").trim();
+  const isDefault = queryLocation.length === 0;
+  const location = isDefault ? DEFAULT_LOCATION : queryLocation;
+
   const [nameFilter, setNameFilter] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>(
     readCategoryParam(searchParams.get("category")),
@@ -48,13 +53,6 @@ export default function Results() {
   }, [selectedCategory]);
 
   useEffect(() => {
-    if (!location.trim()) {
-      setPlaces([]);
-      setLocationLabel(null);
-      setError(null);
-      return;
-    }
-
     const controller = new AbortController();
     setLoading(true);
     setError(null);
@@ -84,17 +82,21 @@ export default function Results() {
   }, [location, selectedCategory]);
 
   const visiblePlaces = filterPlacesByQuery(places, nameFilter);
-  const heading = locationLabel ? `Places near ${locationLabel.split(",")[0]}` : "Places near you";
+  const shortLabel = locationLabel?.split(",")[0] ?? location;
+  const heading = `Places near ${shortLabel}`;
 
   return <>
     <Header />
     <main className="flex flex-col gap-4 my-4 px-6 w-full max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mt-4">{heading}</h1>
+      {isDefault && !loading && !error && (
+        <p className="text-sm text-stone-600">
+          Showing a default view. Search for a city or postal code on the home page to see places near you.
+        </p>
+      )}
       <SearchBar value={nameFilter} onChange={setNameFilter} />
       <FilterBar selected={selectedCategory} onSelect={setSelectedCategory} />
-      {!location.trim() ? (
-        <p className="text-stone-600">Enter a city or postal code on the home page to see places.</p>
-      ) : loading ? (
+      {loading ? (
         <p role="status" className="text-stone-600">Loading places…</p>
       ) : error ? (
         <p role="alert" className="text-stone-700">{error}</p>
