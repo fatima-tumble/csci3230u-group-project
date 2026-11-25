@@ -7,6 +7,7 @@ import PlaceMap from "../components/map"
 import { categoriesFromKinds } from "../data/categories"
 import { addRecentlyViewedPlace } from "../hooks/useRecentlyViewed"
 import LogVisitButton from "../components/logVisitButton"
+import { fetchPlaceDetails } from "../data/api"
 
 
 // Technically it should be hidden through server proxy
@@ -114,43 +115,29 @@ async function getApiDetails(placeName: String) {
     return placeData
 }
 
-async function getPlaceData(xid: String) {
-    let placeData = await fetch(`https://api.opentripmap.com/0.1/en/places/xid/${xid}?apikey=${API_KEY}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-
-    return await placeData.json()
-}
-
-
 export default function Details() {
     const { xid } = useParams()
     const [place, setPlace] = useState<PlaceData | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        async function loadData() {
-            if (!xid) {
-                console.log("No xid provided")
-                setLoading(false);
-                return
-            }
-            try {
-                setLoading(true)
-                let data = await getPlaceData(xid)
-                console.log(data)
-                setPlace(data)
+        if (!xid) {
+            setLoading(false)
+            return
+        }
+        const controller = new AbortController()
+        setLoading(true)
+        fetchPlaceDetails(xid, controller.signal)
+            .then((data) => {
+                if (data) setPlace(data as PlaceData)
                 setLoading(false)
-            }
-            catch (err) {
+            })
+            .catch((err) => {
+                if ((err as Error).name === "AbortError") return
                 setLoading(false)
                 console.error("Error fetching place data")
-            }
-        }
-        loadData()
+            })
+        return () => controller.abort()
     }, [xid])
 
     // Record the place in "Recently viewed" once it has loaded successfully

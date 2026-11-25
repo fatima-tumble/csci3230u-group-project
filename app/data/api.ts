@@ -26,19 +26,48 @@ function mapKindsToCategories(kinds: string): Category[] {
   return Array.from(found);
 }
 
+// in-memory caches for the session. nominatim and opentripmap both rate-limit
+// their free tiers (nominatim is ~1 req/sec), so a repeat click on the same
+// location/category shouldn't re-hit the network.
+const geocodeCache = new Map<string, GeocodeResult | null>();
+const nearbyCache = new Map<string, MockPlace[]>();
+const placeDetailsCache = new Map<string, unknown>();
+
+// one retry after a short delay on transient failures. aborts bail out
+// immediately so we don't waste time on a request the caller already cancelled.
+async function fetchWithRetry(input: string, init?: RequestInit): Promise<Response> {
+  try {
+    const res = await fetch(input, init);
+    if (res.ok) return res;
+    if (res.status < 500 && res.status !== 429) return res;
+    throw new Error(`transient ${res.status}`);
+  } catch (err) {
+    if ((err as Error).name === "AbortError") throw err;
+    await new Promise((r) => setTimeout(r, 600));
+    return fetch(input, init);
+  }
+}
+
 export type GeocodeResult = { lat: number; lon: number; label: string };
 
 export async function geocode(query: string, signal?: AbortSignal): Promise<GeocodeResult | null> {
+  const key = query.trim().toLowerCase();
+  if (geocodeCache.has(key)) return geocodeCache.get(key) ?? null;
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=jsonv2&limit=1`;
-  const res = await fetch(url, { signal, headers: { Accept: "application/json" } });
+  const res = await fetchWithRetry(url, { signal, headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error(`Geocoding failed: ${res.status}`);
   const data = await res.json();
-  if (!Array.isArray(data) || data.length === 0) return null;
-  return {
+  if (!Array.isArray(data) || data.length === 0) {
+    geocodeCache.set(key, null);
+    return null;
+  }
+  const result: GeocodeResult = {
     lat: parseFloat(data[0].lat),
     lon: parseFloat(data[0].lon),
     label: data[0].display_name,
   };
+  geocodeCache.set(key, result);
+  return result;
 }
 
 type OtmRadiusItem = {
@@ -55,6 +84,10 @@ export async function fetchNearbyPlaces(
   category: CategoryFilter,
   signal?: AbortSignal,
 ): Promise<MockPlace[]> {
+  const cacheKey = `${lat.toFixed(4)}|${lon.toFixed(4)}|${category}`;
+  const cached = nearbyCache.get(cacheKey);
+  if (cached) return cached;
+
   const params = new URLSearchParams({
     apikey: API_KEY,
     lat: String(lat),
@@ -66,11 +99,11 @@ export async function fetchNearbyPlaces(
   });
   if (category !== "All") params.set("kinds", CATEGORY_TO_KINDS[category]);
 
-  const res = await fetch(`https://api.opentripmap.com/0.1/en/places/radius?${params}`, { signal });
+  const res = await fetchWithRetry(`https://api.opentripmap.com/0.1/en/places/radius?${params}`, { signal });
   if (!res.ok) throw new Error(`OpenTripMap error: ${res.status}`);
   const data: OtmRadiusItem[] = await res.json();
 
-  return data
+  const mapped = data
     .filter((p) => p.name && p.xid)
     .map((p) => ({
       xid: p.xid,
@@ -80,6 +113,8 @@ export async function fetchNearbyPlaces(
       categories: mapKindsToCategories(p.kinds),
       image: normalizeThumb(p.preview?.source),
     }));
+  nearbyCache.set(cacheKey, mapped);
+  return mapped;
 }
 
 // opentripmap returns wikimedia thumbs at 400px, which wikimedia no longer
@@ -103,7 +138,7 @@ type NominatimItem = {
 
 export async function searchPlacesByName(name: string, signal?: AbortSignal): Promise<MockPlace[]> {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(name)}&format=jsonv2&limit=30&addressdetails=0`;
-  const res = await fetch(url, { signal, headers: { Accept: "application/json" } });
+  const res = await fetchWithRetry(url, { signal, headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error(`Nominatim error: ${res.status}`);
   const data: NominatimItem[] = await res.json();
 
@@ -119,10 +154,17 @@ export async function searchPlacesByName(name: string, signal?: AbortSignal): Pr
   });
 }
 
-export async function fetchPlaceImage(xid: string, signal?: AbortSignal): Promise<string | null> {
+export async function fetchPlaceDetails(xid: string, signal?: AbortSignal): Promise<any | null> {
   if (xid.startsWith("osm-")) return null;
-  const res = await fetch(`https://api.opentripmap.com/0.1/en/places/xid/${xid}?apikey=${API_KEY}`, { signal });
+  if (placeDetailsCache.has(xid)) return placeDetailsCache.get(xid);
+  const res = await fetchWithRetry(`https://api.opentripmap.com/0.1/en/places/xid/${xid}?apikey=${API_KEY}`, { signal });
   if (!res.ok) return null;
   const data = await res.json();
+  placeDetailsCache.set(xid, data);
+  return data;
+}
+
+export async function fetchPlaceImage(xid: string, signal?: AbortSignal): Promise<string | null> {
+  const data = await fetchPlaceDetails(xid, signal);
   return normalizeThumb(data?.preview?.source) ?? null;
 }
