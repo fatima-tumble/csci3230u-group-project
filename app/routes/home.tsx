@@ -155,8 +155,8 @@ export default function Home() {
           )}
         </form>
     </div>
-    <div className="flex flex-1 flex-col mt-16 mb-6 px-6 w-full max-w-6xl mx-auto">
-      <div className="flex flex-1 flex-col rounded-2xl bg-accent p-6 sm:p-8">
+    <div className="mt-16 mb-6 px-6 w-full max-w-6xl mx-auto">
+      <div className="rounded-2xl bg-accent p-6 sm:p-8">
         <h1 className="text-2xl font-bold">Explore by category</h1>
         <div className="mt-4">
           <SuggestedCategories categories={suggested} />

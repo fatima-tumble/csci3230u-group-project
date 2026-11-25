@@ -119,6 +119,8 @@ export default function Details() {
     const { xid } = useParams()
     const [place, setPlace] = useState<PlaceData | null>(null)
     const [loading, setLoading] = useState(true)
+    const [loadError, setLoadError] = useState(false)
+    const [retryTick, setRetryTick] = useState(0)
 
     useEffect(() => {
         if (!xid) {
@@ -127,18 +129,21 @@ export default function Details() {
         }
         const controller = new AbortController()
         setLoading(true)
+        setLoadError(false)
         fetchPlaceDetails(xid, controller.signal)
             .then((data) => {
                 if (data) setPlace(data as PlaceData)
+                else setLoadError(true)
                 setLoading(false)
             })
             .catch((err) => {
                 if ((err as Error).name === "AbortError") return
                 setLoading(false)
+                setLoadError(true)
                 console.error("Error fetching place data")
             })
         return () => controller.abort()
-    }, [xid])
+    }, [xid, retryTick])
 
     // Record the place in "Recently viewed" once it has loaded successfully
     useEffect(() => {
@@ -158,7 +163,18 @@ export default function Details() {
         return <>
             <Header />
             <main className="flex flex-col items-start gap-4 mt-8 px-6 w-full max-w-6xl mx-auto">
-                <p role="status" className="text-xl font-bold">{loading ? "Loading..." : "Place not found"}</p>
+                <p role="status" className="text-xl font-bold">
+                    {loading ? "Loading..." : loadError ? "Couldn't load this place." : "Place not found"}
+                </p>
+                {!loading && loadError && (
+                    <button
+                        type="button"
+                        onClick={() => setRetryTick((n) => n + 1)}
+                        className="rounded-full border-2 border-stone-300 bg-white px-4 py-2 text-sm font-bold hover:border-brand"
+                    >
+                        Try again
+                    </button>
+                )}
                 {!loading && backLink}
             </main>
         </>

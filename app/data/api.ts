@@ -33,19 +33,24 @@ const geocodeCache = new Map<string, GeocodeResult | null>();
 const nearbyCache = new Map<string, MockPlace[]>();
 const placeDetailsCache = new Map<string, unknown>();
 
-// one retry after a short delay on transient failures. aborts bail out
-// immediately so we don't waste time on a request the caller already cancelled.
+// retry on transient failures (5xx, 429, network blips). aborts bail out
+// immediately so we don't waste time on a cancelled request.
 async function fetchWithRetry(input: string, init?: RequestInit): Promise<Response> {
-  try {
-    const res = await fetch(input, init);
-    if (res.ok) return res;
-    if (res.status < 500 && res.status !== 429) return res;
-    throw new Error(`transient ${res.status}`);
-  } catch (err) {
-    if ((err as Error).name === "AbortError") throw err;
-    await new Promise((r) => setTimeout(r, 600));
-    return fetch(input, init);
+  const delays = [300, 800, 1600];
+  let lastErr: unknown;
+  for (let attempt = 0; attempt <= delays.length; attempt++) {
+    try {
+      const res = await fetch(input, init);
+      if (res.ok) return res;
+      if (res.status < 500 && res.status !== 429) return res;
+      lastErr = new Error(`transient ${res.status}`);
+    } catch (err) {
+      if ((err as Error).name === "AbortError") throw err;
+      lastErr = err;
+    }
+    if (attempt < delays.length) await new Promise((r) => setTimeout(r, delays[attempt]));
   }
+  throw lastErr;
 }
 
 export type GeocodeResult = { lat: number; lon: number; label: string };
