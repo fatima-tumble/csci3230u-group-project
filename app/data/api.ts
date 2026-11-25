@@ -78,6 +78,20 @@ export async function fetchNearbyPlaces(
       description: "",
       distanceKm: Math.round(p.dist / 100) / 10,
       categories: mapKindsToCategories(p.kinds),
-      image: p.preview?.source,
+      image: normalizeThumb(p.preview?.source),
     }));
+}
+
+// opentripmap returns wikimedia thumbs at 400px, which wikimedia no longer
+// serves for arbitrary sizes. rewrite to a size that's actually cached.
+function normalizeThumb(src?: string): string | undefined {
+  if (!src) return undefined;
+  return src.replace(/\/\d+px-/, "/960px-");
+}
+
+export async function fetchPlaceImage(xid: string, signal?: AbortSignal): Promise<string | null> {
+  const res = await fetch(`https://api.opentripmap.com/0.1/en/places/xid/${xid}?apikey=${API_KEY}`, { signal });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return normalizeThumb(data?.preview?.source) ?? null;
 }
