@@ -1,4 +1,5 @@
 import { NavLink } from "react-router";
+import AccountMenu from "./accountMenu";
 
 const navItems = [
     { to: "/", label: "Home" },
@@ -12,7 +13,7 @@ export default function Header() {
             <NavLink to="/" className="text-2xl sm:text-3xl font-bold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
                 Wander
             </NavLink>
-            <nav aria-label="Primary">
+            <nav aria-label="Primary" className="order-3 w-full sm:order-2 sm:w-auto">
                 <ul className="flex items-center gap-1 sm:gap-2 text-sm sm:text-base font-medium">
                     {navItems.map(({ to, label }) => (
                         <li key={to}>
@@ -33,6 +34,9 @@ export default function Header() {
                     ))}
                 </ul>
             </nav>
+            <div className="order-2 sm:order-3">
+                <AccountMenu />
+            </div>
         </header>
     );
 }

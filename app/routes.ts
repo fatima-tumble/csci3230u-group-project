@@ -5,4 +5,7 @@ export default [
   route("results", "routes/results.tsx"),
   route("places/:xid", "routes/details.tsx"),
   route("about", "routes/about.tsx"),
+  route("u/:username", "routes/profile.tsx"),
+  route("settings", "routes/settings.tsx"),
+  route("reset-password", "routes/resetPassword.tsx"),
 ] satisfies RouteConfig;
