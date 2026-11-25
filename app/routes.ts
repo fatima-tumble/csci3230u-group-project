@@ -8,4 +8,5 @@ export default [
   route("u/:username", "routes/profile.tsx"),
   route("settings", "routes/settings.tsx"),
   route("reset-password", "routes/resetPassword.tsx"),
+  route("feed", "routes/feed.tsx"),
 ] satisfies RouteConfig;

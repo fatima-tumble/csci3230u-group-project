@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import PlaceMap from "../components/map"
 import { categoriesFromKinds } from "../data/categories"
 import { addRecentlyViewedPlace } from "../hooks/useRecentlyViewed"
+import LogVisitButton from "../components/logVisitButton"
 
 
 // Technically it should be hidden through server proxy
@@ -195,6 +196,7 @@ export default function Details() {
                     {address && (
                         <p className="mt-2 text-stone-600"><span aria-hidden="true">📍 </span>{address}</p>
                     )}
+                    <LogVisitButton place={{ xid: place.xid, name: place.name, image: place.preview?.source }} />
                     <ul aria-label="Tags" className="mt-4 flex flex-row flex-wrap gap-2">
                         {tags.map((tag, index) => <li key={index}><Tag>{tag}</Tag></li>)}
                     </ul>
