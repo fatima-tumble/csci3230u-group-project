@@ -9,4 +9,7 @@ export default [
   route("settings", "routes/settings.tsx"),
   route("reset-password", "routes/resetPassword.tsx"),
   route("feed", "routes/feed.tsx"),
+  route("scrapbooks", "routes/scrapbooks.tsx"),
+  route("scrapbooks/new", "routes/scrapbookEditor.tsx", { id: "scrapbook-new" }),
+  route("scrapbooks/:id", "routes/scrapbookEditor.tsx", { id: "scrapbook-edit" }),
 ] satisfies RouteConfig;

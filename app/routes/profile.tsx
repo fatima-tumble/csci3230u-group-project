@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from "react-router";
 import type { Route } from "./+types/profile";
 import Header from "../components/header";
 import ProfileHeader from "../components/profileHeader";
+import ProfileScrapbooks from "../components/scrapbook/profileScrapbooks";
 import FollowButton from "../components/followButton";
 import VisitList from "../components/visitList";
 import Tabs, { type TabItem } from "../components/tabs";
@@ -124,6 +125,7 @@ export default function ProfilePage() {
     const visible = canSeePosts({ isOwnProfile: isOwn, isPrivate: !!profile.is_private, followStatus });
     const tabs: TabItem[] = [
       { id: "visits", label: "Visits", content: <ProfileVisits profile={profile} isOwn={isOwn} /> },
+      { id: "scrapbooks", label: "Scrapbooks", content: <ProfileScrapbooks userId={profile.id} isOwnProfile={isOwn} /> },
     ];
 
     return (

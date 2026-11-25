@@ -53,6 +53,7 @@ export default function AccountMenu() {
   const name = profile ? profileName(profile) : user.email ?? "Account";
   const items: AccountMenuItem[] = [
     ...(profile ? [{ to: `/u/${profile.username}`, label: "Profile" }] : []),
+    { to: "/scrapbooks", label: "Scrapbooks" },
     { to: "/settings", label: "Settings" },
   ];
 
