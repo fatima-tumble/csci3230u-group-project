@@ -10,6 +10,7 @@ import SuggestedCategories from "../components/suggestedCategories";
 import { categories, type Category } from "../data/categories";
 import { suggestCategories } from "../data/recentlyViewed";
 import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
+import { useNearbySearch } from "../hooks/useNearbySearch";
 import { fetchNearbyPlaces, geocode } from "../data/api";
 import type { MockPlace } from "../data/places";
 import { pickRandom } from "../data/random";
@@ -37,6 +38,7 @@ export default function Home() {
   const { places: recentPlaces, clear: clearRecent } = useRecentlyViewed();
   const suggested = suggestCategories(recentPlaces);
   const [suggestions, setSuggestions] = useState<MockPlace[]>([]);
+  const { searchNearby, loading, geoError } = useNearbySearch();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -140,10 +142,21 @@ export default function Home() {
           )}
           <button type="submit" className="text-sm font-bold bg-brand text-white hover:bg-brand/90 py-3 px-5 rounded-full">Search</button>
           {mode === "location" && (
-            <button type="button" aria-label="Use my location" className="whitespace-nowrap text-sm font-bold bg-accent text-stone-900 hover:bg-accent/90 py-3 px-5 rounded-full">
-              <span aria-hidden="true" className="sm:hidden">📍</span>
-              <span aria-hidden="true" className="hidden sm:inline">Use my location</span>
-            </button>
+            <>
+              <button
+                type="button"
+                aria-label="Use my location"
+                onClick={() => searchNearby()}
+                disabled={loading}
+                className="whitespace-nowrap text-sm font-bold bg-accent text-stone-900 hover:bg-accent/90 py-3 px-5 rounded-full disabled:opacity-50"
+              >
+                <span aria-hidden="true" className="sm:hidden">📍</span>
+                <span aria-hidden="true" className="hidden sm:inline">{loading ? "Getting location..." : "Use my location"}</span>
+              </button>
+              {geoError && (
+                <p role="alert" className="text-sm text-red-600">{geoError}</p>
+              )}
+            </>
           )}
         </form>
     </div>
