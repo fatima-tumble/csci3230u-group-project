@@ -23,6 +23,39 @@ export function meta({}: Route.MetaArgs) {
 const DEFAULT_LOCATION = "Toronto";
 const PAGE_SIZE = 9;
 
+type SortKey = "distance-asc" | "distance-desc" | "name-asc" | "name-desc";
+const SORT_OPTIONS: Array<{ value: SortKey; label: string }> = [
+  { value: "distance-asc", label: "Closest first" },
+  { value: "distance-desc", label: "Farthest first" },
+  { value: "name-asc", label: "Name (A–Z)" },
+  { value: "name-desc", label: "Name (Z–A)" },
+];
+
+function readCategoryParam(raw: string | null): CategoryFilter {
+  if (!raw) return "All";
+  const match = (categories as readonly string[]).find((c) => c.toLowerCase() === raw.toLowerCase());
+  return (match as CategoryFilter) ?? "All";
+}
+
+function readPageParam(raw: string | null): number {
+  const n = Number.parseInt(raw ?? "", 10);
+  return Number.isFinite(n) && n > 0 ? n : 1;
+}
+
+function readSortParam(raw: string | null): SortKey {
+  return (SORT_OPTIONS.find((o) => o.value === raw)?.value) ?? "distance-asc";
+}
+
+function sortPlaces(places: MockPlace[], sort: SortKey): MockPlace[] {
+  const copy = [...places];
+  switch (sort) {
+    case "distance-desc": return copy.sort((a, b) => b.distanceKm - a.distanceKm);
+    case "name-asc":      return copy.sort((a, b) => a.name.localeCompare(b.name));
+    case "name-desc":     return copy.sort((a, b) => b.name.localeCompare(a.name));
+    default:              return copy.sort((a, b) => a.distanceKm - b.distanceKm);
+  }
+}
+
 export default function Results() {
   const [searchParams, setSearchParams] = useSearchParams();
   const nameQuery = (searchParams.get("name") ?? "").trim();
