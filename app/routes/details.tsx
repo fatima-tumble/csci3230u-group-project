@@ -1,7 +1,6 @@
 import Header from "../components/header"
 import Tag from "../components/tags"
-import { useParams } from "react-router-dom"
-import { Link } from "react-router"
+import { Link, useParams } from "react-router"
 import { useState, useEffect } from "react"
 import PlaceMap from "../components/map"
 import { categoriesFromKinds } from "../data/categories"
