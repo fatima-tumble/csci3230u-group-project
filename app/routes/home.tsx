@@ -30,8 +30,6 @@ export default function Home() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<SearchMode>("location");
   const [city, setCity] = useState("");
-  const [region, setRegion] = useState("");
-  const [country, setCountry] = useState("");
   const [name, setName] = useState("");
   const { places: recentPlaces, clear: clearRecent } = useRecentlyViewed();
   const suggested = suggestCategories(recentPlaces);
@@ -54,7 +52,7 @@ export default function Home() {
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    navigate({ pathname: "/results", search: resultsSearchFor({ mode, name, city, region, country }) });
+    navigate({ pathname: "/results", search: resultsSearchFor({ mode, name, city }) });
   }
 
   return <div className="flex flex-col min-h-screen">
@@ -84,34 +82,14 @@ export default function Home() {
         <form onSubmit={handleSearch} role="search" aria-label={mode === "name" ? "Name search" : "Location search"} className="flex flex-wrap items-center gap-2 w-full max-w-2xl mt-4 mb-8 p-2 pl-4 bg-white border-2 border-stone-300 rounded-full focus-within:border-brand">
           {mode === "location" ? (
             <>
-              <label htmlFor="home-city-input" className="sr-only">City</label>
+              <label htmlFor="home-city-input" className="sr-only">City or town</label>
               <input
                 id="home-city-input"
                 type="search"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
-                placeholder="City"
-              />
-              <span aria-hidden="true" className="h-6 w-px bg-stone-300" />
-              <label htmlFor="home-region-input" className="sr-only">State or province</label>
-              <input
-                id="home-region-input"
-                type="search"
-                value={region}
-                onChange={(e) => setRegion(e.target.value)}
-                className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
-                placeholder="State / Province"
-              />
-              <span aria-hidden="true" className="h-6 w-px bg-stone-300" />
-              <label htmlFor="home-country-input" className="sr-only">Country</label>
-              <input
-                id="home-country-input"
-                type="search"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                className="flex-1 min-w-0 px-2 text-sm sm:text-base font-bold bg-transparent outline-none"
-                placeholder="Country (optional)"
+                placeholder="City or town"
               />
             </>
           ) : (
@@ -148,7 +126,7 @@ export default function Home() {
           {categories.map((category) => (
             <li key={category}>
               <Link
-                to={{ pathname: "/results", search: resultsSearchFor({ mode, name, city, region, country, category }) }}
+                to={{ pathname: "/results", search: resultsSearchFor({ mode, name, city, category }) }}
                 className="inline-flex items-center justify-center rounded-md border border-stone-300 bg-white py-2 px-5 text-xs font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               >
                 {category}
