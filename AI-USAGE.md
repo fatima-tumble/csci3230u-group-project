@@ -85,3 +85,23 @@ is logged below.
   `Math.random` for determinism.
 
 ---
+
+### #N — Bug fix
+
+- **Date:** 2026-11-25
+- **Member:** Julian Cruzet
+- **Tool / model:** ChatGPT (free)
+- **Files:** `app/routes/results.tsx`
+- **Prompt (verbatim):**
+
+  ```
+  hey theres a bug, the sort helpers were declared twice in results.tsx, breaking the build. fix it please and leave it for me to review.
+  ```
+
+- **What it produced & what I changed:** 
+
+  ```
+  It fixed the bug and the results page now loads properly.
+  ```
+
+---
