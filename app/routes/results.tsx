@@ -22,6 +22,14 @@ export function meta({}: Route.MetaArgs) {
 const DEFAULT_LOCATION = "Toronto";
 const PAGE_SIZE = 9;
 
+type SortKey = "distance-asc" | "distance-desc" | "name-asc" | "name-desc";
+const SORT_OPTIONS: Array<{ value: SortKey; label: string }> = [
+  { value: "distance-asc", label: "Closest first" },
+  { value: "distance-desc", label: "Farthest first" },
+  { value: "name-asc", label: "Name (A–Z)" },
+  { value: "name-desc", label: "Name (Z–A)" },
+];
+
 function readCategoryParam(raw: string | null): CategoryFilter {
   if (!raw) return "All";
   const match = (categories as readonly string[]).find((c) => c.toLowerCase() === raw.toLowerCase());
@@ -31,6 +39,20 @@ function readCategoryParam(raw: string | null): CategoryFilter {
 function readPageParam(raw: string | null): number {
   const n = Number.parseInt(raw ?? "", 10);
   return Number.isFinite(n) && n > 0 ? n : 1;
+}
+
+function readSortParam(raw: string | null): SortKey {
+  return (SORT_OPTIONS.find((o) => o.value === raw)?.value) ?? "distance-asc";
+}
+
+function sortPlaces(places: MockPlace[], sort: SortKey): MockPlace[] {
+  const copy = [...places];
+  switch (sort) {
+    case "distance-desc": return copy.sort((a, b) => b.distanceKm - a.distanceKm);
+    case "name-asc":      return copy.sort((a, b) => a.name.localeCompare(b.name));
+    case "name-desc":     return copy.sort((a, b) => b.name.localeCompare(a.name));
+    default:              return copy.sort((a, b) => a.distanceKm - b.distanceKm);
+  }
 }
 
 export default function Results() {
@@ -53,6 +75,19 @@ export default function Results() {
 
   const { selectedIds, selectedPlaces, isPanelOpen, setIsPanelOpen, toggleComparePlace, removeComparePlace, } = usePlaceComparison(places);
   const requestedPage = readPageParam(searchParams.get("page"));
+  const sort = readSortParam(searchParams.get("sort"));
+
+  function setSort(next: SortKey) {
+    setSearchParams(
+      (prev) => {
+        if (next === "distance-asc") prev.delete("sort");
+        else prev.set("sort", next);
+        prev.delete("page");
+        return prev;
+      },
+      { replace: true },
+    );
+  }
 
   useEffect(() => {
     setSearchParams(
@@ -126,7 +161,7 @@ export default function Results() {
     return () => controller.abort();
   }, [isNameMode, nameQuery, location, selectedCategory]);
 
-  const visiblePlaces = filterPlacesByQuery(places, nameFilter);
+  const visiblePlaces = sortPlaces(filterPlacesByQuery(places, nameFilter), sort);
   const pageCount = Math.max(1, Math.ceil(visiblePlaces.length / PAGE_SIZE));
   const page = Math.min(Math.max(1, requestedPage), pageCount);
   const pagedPlaces = visiblePlaces.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -161,7 +196,22 @@ export default function Results() {
         </p>
       )}
       <SearchBar value={nameFilter} onChange={setNameFilter} />
-      <FilterBar selected={selectedCategory} onSelect={setSelectedCategory} />
+      <div className="flex flex-wrap items-center gap-3">
+        <FilterBar selected={selectedCategory} onSelect={setSelectedCategory} />
+        <div className="ml-auto flex items-center gap-2">
+          <label htmlFor="results-sort" className="text-sm font-semibold text-stone-700">Sort</label>
+          <select
+            id="results-sort"
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            className="rounded-[10px] border-2 border-stone-300 bg-white px-3 py-2 text-sm font-bold focus:border-brand outline-none"
+          >
+            {SORT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+      </div>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <section aria-label="Search results" className="min-w-0 flex-1">
           {loading ? (
