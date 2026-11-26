@@ -1,6 +1,9 @@
 ## Team Name
 Team Wander
 
+## Live URL
+https://csci3230u-group-project-six.vercel.app/
+
 ## Topic and Candidate API 
 We plan to build an application focusing on food spots such as restaurants, cafes, and fast food chains.
 
