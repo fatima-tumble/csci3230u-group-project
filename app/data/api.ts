@@ -17,7 +17,7 @@ const KIND_TO_CATEGORY: Array<[RegExp, Category]> = [
   [/sport|natural|interesting_places|other/, "Activities"],
 ];
 
-function mapKindsToCategories(kinds: string): Category[] {
+export function mapKindsToCategories(kinds: string): Category[] {
   const found = new Set<Category>();
   for (const [re, cat] of KIND_TO_CATEGORY) {
     if (re.test(kinds)) found.add(cat);
@@ -124,7 +124,7 @@ export async function fetchNearbyPlaces(
 
 // opentripmap returns wikimedia thumbs at 400px, which wikimedia no longer
 // serves for arbitrary sizes. rewrite to a size that's actually cached.
-function normalizeThumb(src?: string): string | undefined {
+export function normalizeThumb(src?: string): string | undefined {
   if (!src) return undefined;
   return src.replace(/\/\d+px-/, "/960px-");
 }
