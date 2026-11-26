@@ -199,9 +199,12 @@ export default function Details() {
                         <p className="mt-2 text-stone-600"><span aria-hidden="true">📍 </span>{address}</p>
                     )}
                     <LogVisitButton place={{ xid: place.xid, name: place.name, image: place.preview?.source }} />
-                    <ul aria-label="Tags" className="mt-4 flex flex-row flex-wrap gap-2">
-                        {tags.map((tag, index) => <li key={index}><Tag>{tag}</Tag></li>)}
-                    </ul>
+                    <section className="mt-6">
+                        <h2 className="text-xl font-bold">Tags</h2>
+                        <ul aria-label="Tags" className="mt-2 flex flex-row flex-wrap gap-2">
+                            {tags.map((tag, index) => <li key={index}><Tag>{tag}</Tag></li>)}
+                        </ul>
+                    </section>
                     <ul className="mt-4 flex flex-row flex-wrap gap-2">
                         <button
                             type="button"
