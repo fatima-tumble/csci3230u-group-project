@@ -86,7 +86,7 @@ is logged below.
 
 ---
 
-### #N — Bug fix
+### #4 — Bug fix
 
 - **Date:** 2026-11-25
 - **Member:** Julian Cruzet
@@ -98,10 +98,36 @@ is logged below.
   hey theres a bug, the sort helpers were declared twice in results.tsx, breaking the build. fix it please and leave it for me to review.
   ```
 
-- **What it produced & what I changed:** 
+- **What it produced & what I changed:**
 
   ```
   It fixed the bug and the results page now loads properly.
+  ```
+
+---
+
+### #5 — Nearby-search bug identification/fix
+
+- **Date:** 2026-11-25
+- **Member:** Fatima Nawaz
+- **Tool / model:** ChatGPT (free)
+- **Files:** `app/routes/results.tsx`
+- **Prompt (verbatim):**
+
+  ```
+  Why aren't places being loaded according to my location? Clicking on the geolocation button returns the default Toronto results page.
+  ```
+
+- **What it produced & what I changed:**
+
+  ```
+  It identified that the coordinates weren't being preserved by the Results component. The setSearchParams() were updated to include the state which preserves user coordinates when search parameters are changed.
+  
+  Code:
+  {
+  replace: true,
+  state: nearbyLocation.state,
+  },
   ```
 
 ---
