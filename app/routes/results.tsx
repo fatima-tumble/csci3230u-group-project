@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams, useLocation } from "react-router";
 import type { Route } from "./+types/results";
+import type { UserCoordinates } from "../hooks/useUserLocation";
 import Header from "../components/header";
 import FilterBar from "../components/filterBar";
 import NoPlacesFound from "../components/noPlacesFound";
 import PlaceCard from "../components/placeCard";
 import SearchBar from "../components/searchBar";
 import ComparePanel from "../components/comparePanel";
-import usePlaceComparison from "~/hooks/usePlaceComparison";
+import usePlaceComparison from "../hooks/usePlaceComparison";
 import { filterPlacesByQuery, type MockPlace } from "../data/places";
 import { categories, type CategoryFilter } from "../data/categories";
 import { fetchNearbyPlaces, geocode, searchPlacesByName } from "../data/api";
@@ -38,7 +39,8 @@ export default function Results() {
   const nameQuery = (searchParams.get("name") ?? "").trim();
   const queryLocation = (searchParams.get("q") ?? "").trim();
   const isNameMode = nameQuery.length > 0;
-  const isDefault = !isNameMode && queryLocation.length === 0;
+  const currentLocation = searchParams.get("nearby") === "current";
+  const isDefault = !isNameMode && !currentLocation && queryLocation.length === 0;
   const location = isDefault ? DEFAULT_LOCATION : queryLocation;
 
   const [nameFilter, setNameFilter] = useState("");
@@ -53,6 +55,8 @@ export default function Results() {
 
   const { selectedIds, selectedPlaces, isPanelOpen, setIsPanelOpen, toggleComparePlace, removeComparePlace, } = usePlaceComparison(places);
   const requestedPage = readPageParam(searchParams.get("page"));
+  const nearbyLocation = useLocation();
+  const coordinates = (nearbyLocation.state as {coordinates?: UserCoordinates} | null)?.coordinates;
 
   useEffect(() => {
     setSearchParams(
@@ -62,7 +66,9 @@ export default function Results() {
         prev.delete("page");
         return prev;
       },
-      { replace: true },
+      { replace: true,
+        state: nearbyLocation.state,
+      },
     );
   }, [selectedCategory]);
 
@@ -72,7 +78,9 @@ export default function Results() {
         prev.delete("page");
         return prev;
       },
-      { replace: true },
+      { replace: true,
+        state: nearbyLocation.state,
+       },
     );
   }, [nameFilter]);
 
@@ -83,7 +91,9 @@ export default function Results() {
         else prev.set("page", String(next));
         return prev;
       },
-      { replace: false },
+      { replace: false,
+        state: nearbyLocation.state,
+       },
     );
   }
 
@@ -101,6 +111,20 @@ export default function Results() {
             ? results
             : results.filter((p) => p.categories.includes(selectedCategory));
           setPlaces(filtered);
+          setLoading(false);
+          return;
+        }
+        else if (currentLocation) {
+          if (!coordinates) {
+            setPlaces([]);
+            setLocationLabel(null);
+            setError("Couldn't find your current location. Please try again by returning to the home page.");
+            setLoading(false);
+            return;
+          }
+          setLocationLabel("Your Location");
+          const results = await fetchNearbyPlaces(coordinates.lat, coordinates.lon, selectedCategory, controller.signal);
+          setPlaces(results);
           setLoading(false);
           return;
         }
@@ -124,14 +148,14 @@ export default function Results() {
     })();
 
     return () => controller.abort();
-  }, [isNameMode, nameQuery, location, selectedCategory]);
+  }, [isNameMode, nameQuery, currentLocation, coordinates?.lat, coordinates?.lon, location, selectedCategory]);
 
   const visiblePlaces = filterPlacesByQuery(places, nameFilter);
   const pageCount = Math.max(1, Math.ceil(visiblePlaces.length / PAGE_SIZE));
   const page = Math.min(Math.max(1, requestedPage), pageCount);
   const pagedPlaces = visiblePlaces.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const shortLabel = locationLabel?.split(",")[0] ?? location;
-  const heading = isNameMode ? `Results for "${nameQuery}"` : `Places near ${shortLabel}`;
+  const heading = isNameMode ? `Results for "${nameQuery}"` : currentLocation ? "Places near you" : `Places near ${shortLabel}`;
 
   return <>
     <Header />
