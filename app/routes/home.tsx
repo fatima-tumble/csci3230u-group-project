@@ -149,10 +149,10 @@ export default function Home() {
     </div>
     <div className="mt-16 mb-6 px-6 w-full max-w-6xl mx-auto">
       <div className="rounded-2xl bg-accent p-6 sm:p-8">
-        <h1 className="text-2xl font-bold">Explore by category</h1>
+        <h2 className="text-2xl font-bold">Explore by category</h2>
         <div className="mt-4">
           <SuggestedCategories categories={suggested} />
-          {suggested.length > 0 && <h2 className="text-lg font-bold mb-3">All categories</h2>}
+          {suggested.length > 0 && <h3 className="text-lg font-bold mb-3">All categories</h3>}
         </div>
         <div className="flex flex-row flex-wrap rounded-[10px] gap-3">
             {categories.map((category) => (
@@ -170,7 +170,7 @@ export default function Home() {
     <RecentlyViewed places={recentPlaces} onClear={clearRecent} />
     {suggestions.length > 0 && (
       <section aria-labelledby="suggested-heading" className="mb-12 px-6 w-full max-w-6xl mx-auto">
-        <h2 id="suggested-heading" className="text-2xl font-bold">Suggested for you</h2>
+        <h2 id="suggested-heading" className="text-2xl font-bold">Places to try</h2>
         <ul aria-label="Suggested places" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {suggestions.map((place) => (
             <PlaceCard
