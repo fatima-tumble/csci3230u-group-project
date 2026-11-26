@@ -12,7 +12,7 @@ import usePlaceComparison from "../hooks/usePlaceComparison";
 import { filterPlacesByQuery, type MockPlace } from "../data/places";
 import { type CategoryFilter } from "../data/categories";
 import { fetchNearbyPlaces, geocode, searchPlacesByName } from "../data/api";
-import { readCategoryParam, readPageParam, readSortParam, sortPlaces, SORT_OPTIONS, type SortKey } from "../data/resultsParams";
+import { readCategoryParam, readPageParam, readSortParam, sortPlaces, paginate, SORT_OPTIONS, type SortKey } from "../data/resultsParams";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -158,9 +158,7 @@ export default function Results() {
   }, [isNameMode, nameQuery, currentLocation, coordinates?.lat, coordinates?.lon, location, selectedCategory]);
 
   const visiblePlaces = sortPlaces(filterPlacesByQuery(places, nameFilter), sort);
-  const pageCount = Math.max(1, Math.ceil(visiblePlaces.length / PAGE_SIZE));
-  const page = Math.min(Math.max(1, requestedPage), pageCount);
-  const pagedPlaces = visiblePlaces.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const { page, pageCount, items: pagedPlaces } = paginate(visiblePlaces, requestedPage, PAGE_SIZE);
   const shortLabel = locationLabel?.split(",")[0] ?? location;
   const heading = isNameMode ? `Results for "${nameQuery}"` : currentLocation ? "Places near you" : `Places near ${shortLabel}`;
 

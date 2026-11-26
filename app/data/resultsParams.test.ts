@@ -4,6 +4,7 @@ import {
   readPageParam,
   readSortParam,
   sortPlaces,
+  paginate,
 } from "./resultsParams";
 import type { MockPlace } from "./places";
 
@@ -96,5 +97,59 @@ describe("sortPlaces", () => {
     const original = [...places];
     sortPlaces(places, "name-asc");
     expect(places).toEqual(original);
+  });
+
+  it("sorts stably enough that items with the same distance keep order among themselves", () => {
+    const same = [
+      place({ xid: "a", name: "A", distanceKm: 1 }),
+      place({ xid: "b", name: "B", distanceKm: 1 }),
+      place({ xid: "c", name: "C", distanceKm: 1 }),
+    ];
+    expect(sortPlaces(same, "distance-asc").map((p) => p.xid)).toEqual(["a", "b", "c"]);
+  });
+});
+
+describe("paginate", () => {
+  const items = Array.from({ length: 25 }, (_, i) => i + 1);
+
+  it("returns the first page by default and reports the total page count", () => {
+    const result = paginate(items, 1, 9);
+    expect(result.page).toBe(1);
+    expect(result.pageCount).toBe(3);
+    expect(result.items).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  });
+
+  it("returns the right slice for a middle page", () => {
+    expect(paginate(items, 2, 9).items).toEqual([10, 11, 12, 13, 14, 15, 16, 17, 18]);
+  });
+
+  it("clamps a too-high page to the last page", () => {
+    const result = paginate(items, 99, 9);
+    expect(result.page).toBe(3);
+    expect(result.items).toEqual([19, 20, 21, 22, 23, 24, 25]);
+  });
+
+  it("clamps zero / negative requested pages to 1", () => {
+    expect(paginate(items, 0, 9).page).toBe(1);
+    expect(paginate(items, -5, 9).page).toBe(1);
+  });
+
+  it("reports at least one page when there are no items", () => {
+    const result = paginate([], 1, 9);
+    expect(result.page).toBe(1);
+    expect(result.pageCount).toBe(1);
+    expect(result.items).toEqual([]);
+  });
+
+  it("does not mutate the input array", () => {
+    const original = [...items];
+    paginate(items, 2, 9);
+    expect(items).toEqual(original);
+  });
+
+  it("works when items fit on a single page exactly", () => {
+    const result = paginate([1, 2, 3], 1, 3);
+    expect(result.pageCount).toBe(1);
+    expect(result.items).toEqual([1, 2, 3]);
   });
 });

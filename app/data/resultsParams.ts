@@ -34,3 +34,16 @@ export function sortPlaces(places: MockPlace[], sort: SortKey): MockPlace[] {
     default:              return copy.sort((a, b) => a.distanceKm - b.distanceKm);
   }
 }
+
+export type Pagination<T> = {
+  page: number;
+  pageCount: number;
+  items: T[];
+};
+
+export function paginate<T>(items: T[], requestedPage: number, pageSize: number): Pagination<T> {
+  const pageCount = Math.max(1, Math.ceil(items.length / pageSize));
+  const page = Math.min(Math.max(1, requestedPage), pageCount);
+  const slice = items.slice((page - 1) * pageSize, page * pageSize);
+  return { page, pageCount, items: slice };
+}
