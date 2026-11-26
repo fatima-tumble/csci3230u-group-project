@@ -13,18 +13,10 @@ import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
 import { useNearbySearch } from "../hooks/useNearbySearch";
 import { fetchNearbyPlaces, geocode } from "../data/api";
 import type { MockPlace } from "../data/places";
+import { pickRandom } from "../data/random";
 
 const SUGGESTION_SEED_LOCATION = "Toronto";
 const SUGGESTION_COUNT = 3;
-
-function pickRandom<T>(arr: T[], n: number): T[] {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy.slice(0, n);
-}
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -168,12 +160,12 @@ export default function Home() {
           )}
         </form>
     </div>
-    <div className="flex flex-1 flex-col mt-16 mb-6 px-6 w-full max-w-6xl mx-auto">
-      <div className="flex flex-1 flex-col rounded-2xl bg-accent p-6 sm:p-8">
-        <h1 className="text-2xl font-bold">Explore by category</h1>
+    <div className="mt-16 mb-6 px-6 w-full max-w-6xl mx-auto">
+      <div className="rounded-2xl bg-accent p-6 sm:p-8">
+        <h2 className="text-2xl font-bold">Explore by category</h2>
         <div className="mt-4">
           <SuggestedCategories categories={suggested} />
-          {suggested.length > 0 && <h2 className="text-lg font-bold mb-3">All categories</h2>}
+          {suggested.length > 0 && <h3 className="text-lg font-bold mb-3">All categories</h3>}
         </div>
         <div className="flex flex-row flex-wrap rounded-[10px] gap-3">
             {categories.map((category) => (
@@ -191,7 +183,7 @@ export default function Home() {
     <RecentlyViewed places={recentPlaces} onClear={clearRecent} />
     {suggestions.length > 0 && (
       <section aria-labelledby="suggested-heading" className="mb-12 px-6 w-full max-w-6xl mx-auto">
-        <h2 id="suggested-heading" className="text-2xl font-bold">Suggested for you</h2>
+        <h2 id="suggested-heading" className="text-2xl font-bold">Places to try</h2>
         <ul aria-label="Suggested places" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {suggestions.map((place) => (
             <PlaceCard

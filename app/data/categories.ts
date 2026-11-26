@@ -5,16 +5,32 @@ export type Category = (typeof categories)[number];
 export type CategoryFilter = Category | "All";
 
 // OpenTripMap describes places with "kinds" (e.g. "museums,cultural,interesting_places").
-// This maps those kinds onto the app's own categories.
-const kindsByCategory: Record<Category, string[]> = {
-  Food: ["foods", "restaurants", "cafes", "fast_food", "food_courts", "bars", "pubs", "biergartens", "marketplaces"],
-  Events: ["stadiums", "concert_halls", "opera_houses", "festivals"],
-  Entertainment: ["amusements", "theatres_and_entertainments", "cinemas", "amusement_parks", "water_parks", "ferris_wheels", "miniature_parks", "zoos", "aquariums", "nightclubs"],
-  Activities: ["sport", "natural", "museums", "cultural", "historic", "architecture", "gardens_and_parks", "urban_environment", "beaches", "view_points", "climbing", "diving", "towers"],
+// These two tables are the only place that maps kinds onto the app's categories, so the
+// results filter, result card tags and "Recently viewed" / suggestions always agree.
+
+// Kinds sent to OpenTripMap when filtering results by a category
+export const CATEGORY_TO_KINDS: Record<Category, string> = {
+  Food: "foods",
+  Events: "theatres_and_entertainments,cultural",
+  Entertainment: "amusements,theatres_and_entertainments,cinemas",
+  Activities: "sport,natural,interesting_places",
 };
 
+// Which categories a place belongs to, based on its kinds
+const KIND_TO_CATEGORY: Array<[RegExp, Category]> = [
+  [/foods/, "Food"],
+  [/amusements|cinemas|nightclubs/, "Entertainment"],
+  [/theatres_and_entertainments|cultural|museums|historic/, "Events"],
+  [/sport|natural|interesting_places|other/, "Activities"],
+];
+
 export function categoriesFromKinds(kinds: string | undefined): Category[] {
-  if (!kinds) return [];
-  const placeKinds = new Set(kinds.split(",").map((k) => k.trim()));
-  return categories.filter((category) => kindsByCategory[category].some((kind) => placeKinds.has(kind)));
+  const found = new Set<Category>();
+  for (const [re, cat] of KIND_TO_CATEGORY) {
+    if (kinds && re.test(kinds)) found.add(cat);
+  }
+  // Places that match nothing are treated as general activities
+  if (found.size === 0) found.add("Activities");
+  // Match order matters: result cards show the first category as the main one
+  return Array.from(found);
 }

@@ -1,12 +1,12 @@
 import Header from "../components/header"
 import Tag from "../components/tags"
-import { useParams } from "react-router-dom"
-import { Link } from "react-router"
+import { Link, useParams } from "react-router"
 import { useState, useEffect } from "react"
 import PlaceMap from "../components/map"
 import { categoriesFromKinds } from "../data/categories"
 import { addRecentlyViewedPlace } from "../hooks/useRecentlyViewed"
 import LogVisitButton from "../components/logVisitButton"
+import { fetchPlaceDetails } from "../data/api"
 
 
 // Technically it should be hidden through server proxy
@@ -114,44 +114,35 @@ async function getApiDetails(placeName: String) {
     return placeData
 }
 
-async function getPlaceData(xid: String) {
-    let placeData = await fetch(`https://api.opentripmap.com/0.1/en/places/xid/${xid}?apikey=${API_KEY}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-
-    return await placeData.json()
-}
-
-
 export default function Details() {
     const { xid } = useParams()
     const [place, setPlace] = useState<PlaceData | null>(null)
     const [loading, setLoading] = useState(true)
+    const [loadError, setLoadError] = useState(false)
+    const [retryTick, setRetryTick] = useState(0)
 
     useEffect(() => {
-        async function loadData() {
-            if (!xid) {
-                console.log("No xid provided")
-                setLoading(false);
-                return
-            }
-            try {
-                setLoading(true)
-                let data = await getPlaceData(xid)
-                console.log(data)
-                setPlace(data)
-                setLoading(false)
-            }
-            catch (err) {
-                setLoading(false)
-                console.error("Error fetching place data")
-            }
+        if (!xid) {
+            setLoading(false)
+            return
         }
-        loadData()
-    }, [xid])
+        const controller = new AbortController()
+        setLoading(true)
+        setLoadError(false)
+        fetchPlaceDetails(xid, controller.signal)
+            .then((data) => {
+                if (data) setPlace(data as PlaceData)
+                else setLoadError(true)
+                setLoading(false)
+            })
+            .catch((err) => {
+                if ((err as Error).name === "AbortError") return
+                setLoading(false)
+                setLoadError(true)
+                console.error("Error fetching place data")
+            })
+        return () => controller.abort()
+    }, [xid, retryTick])
 
     // Record the place in "Recently viewed" once it has loaded successfully
     useEffect(() => {
@@ -171,7 +162,18 @@ export default function Details() {
         return <>
             <Header />
             <main className="flex flex-col items-start gap-4 mt-8 px-6 w-full max-w-6xl mx-auto">
-                <p role="status" className="text-xl font-bold">{loading ? "Loading..." : "Place not found"}</p>
+                <p role="status" className="text-xl font-bold">
+                    {loading ? "Loading..." : loadError ? "Couldn't load this place." : "Place not found"}
+                </p>
+                {!loading && loadError && (
+                    <button
+                        type="button"
+                        onClick={() => setRetryTick((n) => n + 1)}
+                        className="rounded-full border-2 border-stone-300 bg-white px-4 py-2 text-sm font-bold hover:border-brand"
+                    >
+                        Try again
+                    </button>
+                )}
                 {!loading && backLink}
             </main>
         </>

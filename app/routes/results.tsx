@@ -10,8 +10,9 @@ import SearchBar from "../components/searchBar";
 import ComparePanel from "../components/comparePanel";
 import usePlaceComparison from "../hooks/usePlaceComparison";
 import { filterPlacesByQuery, type MockPlace } from "../data/places";
-import { categories, type CategoryFilter } from "../data/categories";
+import { type CategoryFilter } from "../data/categories";
 import { fetchNearbyPlaces, geocode, searchPlacesByName } from "../data/api";
+import { readCategoryParam, readPageParam, readSortParam, sortPlaces, SORT_OPTIONS, type SortKey } from "../data/resultsParams";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -22,17 +23,6 @@ export function meta({}: Route.MetaArgs) {
 
 const DEFAULT_LOCATION = "Toronto";
 const PAGE_SIZE = 9;
-
-function readCategoryParam(raw: string | null): CategoryFilter {
-  if (!raw) return "All";
-  const match = (categories as readonly string[]).find((c) => c.toLowerCase() === raw.toLowerCase());
-  return (match as CategoryFilter) ?? "All";
-}
-
-function readPageParam(raw: string | null): number {
-  const n = Number.parseInt(raw ?? "", 10);
-  return Number.isFinite(n) && n > 0 ? n : 1;
-}
 
 export default function Results() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -55,8 +45,25 @@ export default function Results() {
 
   const { selectedIds, selectedPlaces, isPanelOpen, setIsPanelOpen, toggleComparePlace, removeComparePlace, } = usePlaceComparison(places);
   const requestedPage = readPageParam(searchParams.get("page"));
+
   const nearbyLocation = useLocation();
   const coordinates = (nearbyLocation.state as {coordinates?: UserCoordinates} | null)?.coordinates;
+
+  const sort = readSortParam(searchParams.get("sort"));
+
+  function setSort(next: SortKey) {
+    setSearchParams(
+      (prev) => {
+        if (next === "distance-asc") prev.delete("sort");
+        else prev.set("sort", next);
+        prev.delete("page");
+        return prev;
+      },
+      { replace: true,
+        state: nearbyLocation.state,
+       },
+    );
+  }
 
   useEffect(() => {
     setSearchParams(
@@ -150,7 +157,7 @@ export default function Results() {
     return () => controller.abort();
   }, [isNameMode, nameQuery, currentLocation, coordinates?.lat, coordinates?.lon, location, selectedCategory]);
 
-  const visiblePlaces = filterPlacesByQuery(places, nameFilter);
+  const visiblePlaces = sortPlaces(filterPlacesByQuery(places, nameFilter), sort);
   const pageCount = Math.max(1, Math.ceil(visiblePlaces.length / PAGE_SIZE));
   const page = Math.min(Math.max(1, requestedPage), pageCount);
   const pagedPlaces = visiblePlaces.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -185,7 +192,22 @@ export default function Results() {
         </p>
       )}
       <SearchBar value={nameFilter} onChange={setNameFilter} />
-      <FilterBar selected={selectedCategory} onSelect={setSelectedCategory} />
+      <div className="flex flex-wrap items-center gap-3">
+        <FilterBar selected={selectedCategory} onSelect={setSelectedCategory} />
+        <div className="ml-auto flex items-center gap-2">
+          <label htmlFor="results-sort" className="text-sm font-semibold text-stone-700">Sort</label>
+          <select
+            id="results-sort"
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            className="rounded-[10px] border-2 border-stone-300 bg-white px-3 py-2 text-sm font-bold focus:border-brand outline-none"
+          >
+            {SORT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+      </div>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <section aria-label="Search results" className="min-w-0 flex-1">
           {loading ? (
