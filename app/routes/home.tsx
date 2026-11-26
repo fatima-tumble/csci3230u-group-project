@@ -12,18 +12,10 @@ import { suggestCategories } from "../data/recentlyViewed";
 import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
 import { fetchNearbyPlaces, geocode } from "../data/api";
 import type { MockPlace } from "../data/places";
+import { pickRandom } from "../data/random";
 
 const SUGGESTION_SEED_LOCATION = "Toronto";
 const SUGGESTION_COUNT = 3;
-
-function pickRandom<T>(arr: T[], n: number): T[] {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy.slice(0, n);
-}
 
 export function meta({}: Route.MetaArgs) {
   return [

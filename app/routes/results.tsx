@@ -9,8 +9,9 @@ import SearchBar from "../components/searchBar";
 import ComparePanel from "../components/comparePanel";
 import usePlaceComparison from "~/hooks/usePlaceComparison";
 import { filterPlacesByQuery, type MockPlace } from "../data/places";
-import { categories, type CategoryFilter } from "../data/categories";
+import { type CategoryFilter } from "../data/categories";
 import { fetchNearbyPlaces, geocode, searchPlacesByName } from "../data/api";
+import { readCategoryParam, readPageParam, readSortParam, sortPlaces, SORT_OPTIONS, type SortKey } from "../data/resultsParams";
 
 export function meta({}: Route.MetaArgs) {
   return [
