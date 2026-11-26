@@ -1,30 +1,10 @@
-import type { Category, CategoryFilter } from "./categories";
+import { CATEGORY_TO_KINDS, categoriesFromKinds, type CategoryFilter } from "./categories";
 import type { MockPlace } from "./places";
 
 const API_KEY = import.meta.env.VITE_OPENTRIPMAP_API_KEY;
 
-const CATEGORY_TO_KINDS: Record<Category, string> = {
-  Food: "foods",
-  Events: "theatres_and_entertainments,cultural",
-  Entertainment: "amusements,theatres_and_entertainments,cinemas",
-  Activities: "sport,natural,interesting_places",
-};
-
-const KIND_TO_CATEGORY: Array<[RegExp, Category]> = [
-  [/foods/, "Food"],
-  [/amusements|cinemas|nightclubs/, "Entertainment"],
-  [/theatres_and_entertainments|cultural|museums|historic/, "Events"],
-  [/sport|natural|interesting_places|other/, "Activities"],
-];
-
-export function mapKindsToCategories(kinds: string): Category[] {
-  const found = new Set<Category>();
-  for (const [re, cat] of KIND_TO_CATEGORY) {
-    if (re.test(kinds)) found.add(cat);
-  }
-  if (found.size === 0) found.add("Activities");
-  return Array.from(found);
-}
+// The kinds → category mapping lives in categories.ts so every feature uses the same one
+export const mapKindsToCategories = categoriesFromKinds;
 
 // in-memory caches for the session. nominatim and opentripmap both rate-limit
 // their free tiers (nominatim is ~1 req/sec), so a repeat click on the same

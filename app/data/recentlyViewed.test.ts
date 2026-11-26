@@ -7,6 +7,7 @@ import {
   type RecentlyViewedPlace,
 } from "./recentlyViewed";
 import { categoriesFromKinds, type Category } from "./categories";
+import { mapKindsToCategories } from "./api";
 
 function place(xid: string, categories: Category[] = [], viewedAt = 0): RecentlyViewedPlace {
   return { xid, name: `Place ${xid}`, categories, viewedAt };
@@ -68,13 +69,19 @@ describe("suggestCategories", () => {
 
 describe("categoriesFromKinds", () => {
   it("maps OpenTripMap kinds onto app categories", () => {
-    expect(categoriesFromKinds("museums,cultural,interesting_places")).toEqual(["Activities"]);
-    expect(categoriesFromKinds("restaurants,foods,interesting_places")).toEqual(["Food"]);
-    expect(categoriesFromKinds("stadiums,sport,amusements")).toEqual(["Events", "Entertainment", "Activities"]);
+    // Royal Ontario Museum's real kinds
+    expect(categoriesFromKinds("science_museums,cultural,museums,interesting_places")).toEqual(["Events", "Activities"]);
+    expect(categoriesFromKinds("restaurants,foods")).toEqual(["Food"]);
+    expect(categoriesFromKinds("stadiums,sport,amusements")).toEqual(["Entertainment", "Activities"]);
   });
 
-  it("returns nothing for unknown or missing kinds", () => {
-    expect(categoriesFromKinds("banks,transport")).toEqual([]);
-    expect(categoriesFromKinds(undefined)).toEqual([]);
+  it("treats unknown or missing kinds as general activities", () => {
+    expect(categoriesFromKinds("banks,transport")).toEqual(["Activities"]);
+    expect(categoriesFromKinds(undefined)).toEqual(["Activities"]);
+  });
+
+  it("is the same mapping the results page uses", () => {
+    const kinds = "science_museums,cultural,museums,interesting_places";
+    expect(mapKindsToCategories(kinds)).toEqual(categoriesFromKinds(kinds));
   });
 });

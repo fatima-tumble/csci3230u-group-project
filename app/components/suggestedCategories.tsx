@@ -11,7 +11,7 @@ export default function SuggestedCategories({ categories }: suggestedCategoriesP
 
   return (
     <div className="mb-6">
-      <h2 className="text-lg font-bold">Suggested for you</h2>
+      <h3 className="text-lg font-bold">Suggested for you</h3>
       <p className="text-sm text-stone-800">Based on places you've viewed</p>
       <ul className="mt-3 flex flex-row flex-wrap gap-3">
         {categories.map((category) => (
